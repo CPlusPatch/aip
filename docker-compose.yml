@@ -1,0 +1,30 @@
+version: '3.3'
+services:
+    aip:
+        image: 'ghcr.io/cpluspatch/aip:main'
+        container_name: aip
+        networks:
+            - internal
+        restart: unless-stopped
+        volumes:
+            - ./config.toml:/config.toml
+        env_file: .env  
+        links:
+            - db
+    db:
+        image: postgres:13-alpine
+        restart: unless-stopped
+        init: true
+        networks:
+            - internal
+        environment: {
+            POSTGRES_DB: aip,
+            POSTGRES_USER: aip,
+            POSTGRES_PASSWORD: password123,
+        }
+        volumes:
+            - ./data:/var/lib/postgresql/data   
+
+networks:
+    internal:
+        attachable: true
