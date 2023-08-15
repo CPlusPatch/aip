@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 import "./styles/index.css";
 import "@unocss/reset/tailwind.css";
 </script>
