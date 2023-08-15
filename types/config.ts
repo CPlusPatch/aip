@@ -14,5 +14,9 @@ export interface Config {
 		secret_access_key: string;
 		bucket_name: string;
 		public_url: string;
-	}
+	};
+
+	ai: {
+		base_url: string;
+	};
 }

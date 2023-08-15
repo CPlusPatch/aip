@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-named-as-default
 import OpenAI from "openai";
+import { getConfig } from "~/utils/config";
 
 export default defineEventHandler(async event => {
 	event.node.res.writeHead(200, { "Content-Type": "text/plain" });
@@ -8,9 +9,11 @@ export default defineEventHandler(async event => {
 		messages: { role: string; content: string }[];
 	}>(event);
 
+	const config = getConfig();
+
 	const openai = new OpenAI({
 		apiKey: "",
-		baseURL: "http://192.168.2.109:2864/v1",
+		baseURL: `${config.ai.base_url}/v1`,
 	});
 
 	const stream = await openai.chat.completions.create({
