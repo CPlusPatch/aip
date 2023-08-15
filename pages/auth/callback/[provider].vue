@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { UserManager } from 'oidc-client-ts';
-import { Config } from '~/types/config';
-
+import { UserManager } from "oidc-client-ts";
 
 const oidc = (await useFetch("/api/config/oidc")).data;
 
 onMounted(() => {
-	const oidcProvider = oidc.value?.find(o => o.id === useRoute().params.provider);
+	const oidcProvider = oidc.value?.find(
+		o => o.id === useRoute().params.provider
+	);
 
 	if (!oidcProvider) return false;
 
@@ -18,9 +18,7 @@ onMounted(() => {
 	});
 
 	userManager.signinPopupCallback();
-})
+});
 </script>
 
-<template>
-	Signing in...
-</template>
+<template>Signing in...</template>

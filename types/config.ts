@@ -18,5 +18,6 @@ export interface Config {
 
 	ai: {
 		base_url: string;
+		model: string;
 	};
 }

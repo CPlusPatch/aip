@@ -18,7 +18,7 @@ export default defineEventHandler(async event => {
 
 	const stream = await openai.chat.completions.create({
 		messages: messages as any,
-		model: "/models/13B_U/wizardlm-1.0-uncensored-llama2-13b.ggmlv3.q2_K.bin",
+		model: config.ai.model,
 		stream: true,
 		max_tokens: 4096,
 	});
