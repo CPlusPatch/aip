@@ -178,7 +178,7 @@ if (!user)
 
 <template>
 	<div
-		class="dark flex-shrink-0 overflow-x-hidden bg-dark-800 font-['Inter']"
+		class="dark flex-shrink-0 overflow-x-hidden bg-dark-800 font-['Inter'] md:block hidden"
 		style="width: 260px">
 		<div class="h-full w-[260px]">
 			<div class="flex h-full min-h-0 flex-col">
@@ -333,7 +333,7 @@ if (!user)
 												v-else
 												alt="User"
 												loading="lazy"
-												src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80"
+												:src="user?.avatar"
 												class="rounded w-full h-full" />
 										</div>
 									</div>
@@ -368,7 +368,7 @@ if (!user)
 				</div>
 			</div>
 			<div
-				class="absolute bottom-0 pt-20 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent bg-gradient-to-b from-transparent to-dark-600 bg-white md:!bg-transparent dark:md:bg-vert-dark-gradient pt-2 md:pl-2 md:w-[calc(100%-.5rem)]">
+				class="absolute bottom-0 pt-20 left-0 w-full border-t md:border-t-0 border-transparent md:dark:border-transparent bg-gradient-to-b from-transparent to-dark-600 bg-transparent dark:md:bg-vert-dark-gradient pt-2 md:pl-2 md:w-[calc(100%-.5rem)]">
 				<form
 					class="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
 					<div
@@ -409,85 +409,4 @@ if (!user)
 			</div>
 		</main>
 	</div>
-	<!-- <div class="flex max-w-full flex-1 flex-col bg-gray-700">
-		<div class="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
-			<div class="flex-1 overflow-hidden">
-				<div class="relative h-full dark:bg-gray-800">
-					<div class="h-full overflow-y-auto w-full">
-						<div v-if="messages.length > 0" class="flex flex-col items-center text-sm bg-gray-800">
-							<div
-								class="flex w-full items-center justify-center gap-1 border-b border-black/10 bg-gray-50 p-3 text-gray-500 dark:border-gray-900/50 dark:bg-gray-700 dark:text-gray-300">
-								Model: GPT-4
-							</div>
-							<Message v-for="message in messages" :key="message.id" />
-							<div class="w-full h-32 md:h-48 flex-shrink-0"></div>
-							<div ref="bottomOfChatRef"></div>
-						</div>
-						<div v-else class="py-10 relative w-full flex flex-col h-full">
-							<div class="flex items-center justify-center gap-2">
-								<div class="relative w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
-									<button
-										class="relative flex w-full cursor-default flex-col rounded-md border border-black/10 bg-white py-2 pl-3 pr-10 text-left focus:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:border-white/20 dark:bg-gray-800 sm:text-sm align-center"
-										id="headlessui-listbox-button-:r0:" type="button" aria-haspopup="true"
-										aria-expanded="false" data-headlessui-state=""
-										aria-labelledby="headlessui-listbox-label-:r1: headlessui-listbox-button-:r0:">
-										<label class="block text-xs text-gray-700 dark:text-gray-500 text-center"
-											id="headlessui-listbox-label-:r1:" data-headlessui-state="">
-											Model
-										</label>
-										<span class="inline-flex w-full truncate">
-											<span class="flex h-6 items-center gap-1 truncate text-white">
-												{selectedModel.name}
-											</span>
-										</span>
-										<span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-											<BsChevronDown class="h-4 w-4 text-gray-400" />
-										</span>
-									</button>
-								</div>
-							</div>
-							<h1
-								class="text-2xl sm:text-4xl font-semibold text-center text-gray-200 dark:text-gray-600 flex gap-2 items-center justify-center h-screen">
-								ChatGPT Clone
-							</h1>
-						</div>
-						<div class="flex flex-col items-center text-sm dark:bg-gray-800"></div>
-					</div>
-				</div>
-			</div>
-			<div
-				class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient pt-2">
-				<form
-					class="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
-					<div class="relative flex flex-col h-full flex-1 items-stretch md:flex-col">
-						<div v-if="errorMessage" class="mb-2 md:mb-0">
-							<div class="h-full flex ml-1 md:w-full md:m-auto md:mb-2 gap-0 md:gap-2 justify-center">
-								<span class="text-red-500 text-sm">{{ errorMessage }}</span>
-							</div>
-							<div
-								class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
-								<textarea ref="textareaRef" rows="1" :style="{
-									height: `24px`,
-									maxHeight: `200px`,
-									overflowY: `hidden`,
-								}" placeholder="Send a message..."
-									class="m-0 w-full resize-none border-0 bg-transparent p-0 pr-7 focus:ring-0 focus-visible:ring-0 dark:bg-transparent pl-2 md:pl-0"
-									v-model="message" @keydown="handleKeypress"></textarea>
-								<button :disabled="isLoading || message.length == 0" @click="sendMessage"
-									class="absolute p-1 rounded-md bottom-1.5 md:bottom-2.5 bg-transparent disabled:bg-gray-500 right-1 md:right-2 disabled:opacity-40">
-									<FiSend class="h-4 w-4 mr-1 text-white " />
-								</button>
-							</div>
-						</div>
-					</div>
-				</form>
-				<div class="px-3 pt-2 pb-3 text-center text-xs text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
-					<span>
-						ChatGPT Clone may produce inaccurate information about people,
-						places, or facts.
-					</span>
-				</div>
-			</div>
-		</div>
-	</div> -->
 </template>
