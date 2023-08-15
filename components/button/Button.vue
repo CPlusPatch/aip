@@ -31,7 +31,7 @@ defineProps<ButtonProps>();
 		type="button">
 		<Spinner
 			v-if="loading"
-			:theme="theme"
+			:theme="(theme as any)"
 			:class="[spinnerClasses, 'absolute']" />
 		<span v-if="loading">&nbsp;</span>
 		<slot v-else />

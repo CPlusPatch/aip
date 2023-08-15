@@ -16,7 +16,7 @@ const messages = ref<
 	},
 	{
 		content:
-			" Sure, I can help you with that! Here's an example response:\nHi everyone, it's Elvis Presley here! I'm excited to chat with all of you and answer your questions. Let's get started!",
+			"Sure, I can help you with that! Here's an example response:\nHi everyone, it's Elvis Presley here! I'm excited to chat with all of you and answer your questions. Let's get started!",
 		role: "system",
 		id: "oG1ghEAcz3GSud2pvP2Mj",
 	},
@@ -28,7 +28,7 @@ const messages = ref<
 	},
 	{
 		content:
-			" I was actually pretty young when I first became interested in music. I remember listening to the radio and recordings from artists like Hank Williams and Gene Autry, and being really fascinated by their guitar playing and singing. I think I was around 8 or 9 years old when I started wanting to try my hand at it myself.",
+			"I was actually pretty young when I first became interested in music. I remember listening to the radio and recordings from artists like Hank Williams and Gene Autry, and being really fascinated by their guitar playing and singing. I think I was around 8 or 9 years old when I started wanting to try my hand at it myself.",
 		role: "system",
 		id: "HFu-BPtKHe7mrfICEvBvt",
 	},
@@ -39,7 +39,7 @@ const messages = ref<
 	},
 	{
 		content:
-			" Ah, basketball! I'm not sure if I have a particular favorite player, but I do enjoy watching the game and seeing all the amazing athletes in action. It's definitely a fun sport to watch.",
+			"Ah, basketball! I'm not sure if I have a particular favorite player, but I do enjoy watching the game and seeing all the amazing athletes in action. It's definitely a fun sport to watch.",
 		role: "system",
 		id: "GkKNb5aHuBn_L5yomSkFL",
 	},
@@ -51,7 +51,7 @@ const messages = ref<
 	},
 	{
 		content:
-			" Oh boy, this is a tough one! As much as I love watching anime and seeing all the incredible powers that characters have, I think it's best to leave these kinds of battles to the experts. I'll stick to my music and leave the fighting to the professionals!",
+			"Oh boy, this is a tough one! As much as I love watching anime and seeing all the incredible powers that characters have, I think it's best to leave these kinds of battles to the experts. I'll stick to my music and leave the fighting to the professionals!",
 		role: "system",
 		id: "WnIQVfUjpdGYncyrKPEmW",
 	},
@@ -60,7 +60,7 @@ const messages = ref<
 const isLoading = ref(false);
 const errorMessage = ref("");
 const message = ref("");
-const bottomOfChatRef = ref<HTMLElement | null>(null);
+// const bottomOfChatRef = ref<HTMLElement | null>(null);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const sendMessage = async (e: Event) => {
@@ -113,9 +113,9 @@ const sendMessage = async (e: Event) => {
 					"\n"
 				) {
 					messages.value[lastMessageFromSystemIndex].content =
-						messages.value[
-							lastMessageFromSystemIndex
-						].content.slice(1);
+						messages.value[lastMessageFromSystemIndex].content
+							.slice(1)
+							.trim();
 				}
 
 				result = await reader.read();
@@ -156,6 +156,24 @@ const chats = ref([
 		name: "Testing & Assistance",
 	},
 ]);
+
+useHead({
+	title: "Chat · AIP",
+});
+
+definePageMeta({
+	middleware: "auth",
+});
+
+const user = (await useFetch(`/api/user/get`)).data.value;
+
+if (!user)
+	navigateTo(
+		"/auth/login?" +
+			new URLSearchParams({
+				next: "/",
+			})
+	);
 </script>
 
 <template>
@@ -223,12 +241,12 @@ const chats = ref([
 								<div class="flex items-center">
 									<img
 										class="inline-block h-9 w-9 rounded"
-										src="https://cdn-web.cpluspatch.com/with_background.webp"
+										:src="user?.avatar"
 										alt="" />
 									<div class="ml-3">
 										<p
 											class="text-sm font-medium text-gray-200 group-hover:text-gray-50">
-											Gaspard Wierzbinski
+											{{ user?.display_name }}
 										</p>
 										<p
 											class="text-xs font-medium text-gray-400 group-hover:text-gray-200">
@@ -255,7 +273,8 @@ const chats = ref([
 		<main
 			class="relative h-full w-full transition-width flex flex-col overflow-auto items-stretch flex-1">
 			<div class="flex-1 overflow-hidden">
-				<div class="h-full dark:bg-dark-400 overflow-scroll no-scrollbar">
+				<div
+					class="h-full dark:bg-dark-400 overflow-scroll no-scrollbar">
 					<div class="flex flex-col text-sm oveflow-y-scroll pb-10">
 						<header
 							class="sticky top-0 z-[9] w-full"

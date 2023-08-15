@@ -20,7 +20,7 @@ const error = ref<{
 const submit = async (e: Event) => {
 	loading.value = true;
 	const username: string = (e.target as any).username.value;
-	const password: string = (e.target as any).username.value;
+	const password: string = (e.target as any).password.value;
 
 	const response = await fetch("/api/auth/login", {
 		method: "POST",
@@ -53,7 +53,7 @@ definePageMeta({
 	smallNavbar: true,
 });
 
-onMounted(async () => {
+onMounted(() => {
 	if (route.query.code) {
 		// Initiate sign in with Mastodon
 		loading.value = true;
@@ -70,7 +70,7 @@ onMounted(async () => {
 		}).then(async response => {
 			if (response.ok) {
 				token.value = (await response.json()).token;
-	
+
 				if (new URLSearchParams(window.location.search).get("next")) {
 					useRouter().push(
 						new URLSearchParams(window.location.search)
@@ -85,7 +85,6 @@ onMounted(async () => {
 				loading.value = false;
 			}
 		});
-
 	}
 
 	loading.value = false;
@@ -98,7 +97,9 @@ const oidcSignIn = async (oidcProvider: Config["oidc_providers"][0]) => {
 	const userManager = new UserManager({
 		authority: oidcProvider.authority,
 		client_id: oidcProvider.client_id,
-		redirect_uri: `${useRequestURL().origin}/auth/callback/${oidcProvider.id}/`,
+		redirect_uri: `${useRequestURL().origin}/auth/callback/${
+			oidcProvider.id
+		}/`,
 		scope: oidcProvider.scopes.join(" "),
 	});
 
@@ -121,8 +122,7 @@ const oidcSignIn = async (oidcProvider: Config["oidc_providers"][0]) => {
 	}
 
 	loading.value = false;
-}
-
+};
 </script>
 
 <template>
@@ -189,8 +189,12 @@ const oidcSignIn = async (oidcProvider: Config["oidc_providers"][0]) => {
 					</div>
 				</div>
 
-				<div v-if="error" class="rounded bg-red-200 ring-1 ring-red-600 p-4 text-sm flex flex-col gap-2">
-					<strong class="font-semibold text-gray-900">An error occured</strong>
+				<div
+					v-if="error"
+					class="rounded bg-red-200 ring-1 ring-red-600 p-4 text-sm flex flex-col gap-2">
+					<strong class="font-semibold text-gray-900"
+						>An error occured</strong
+					>
 					<span class="text-gray-700">{{ error.message }}</span>
 				</div>
 
