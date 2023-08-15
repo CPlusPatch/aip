@@ -7,55 +7,7 @@ const messages = ref<
 		role: "user" | "system";
 		id: string;
 	}[]
->([
-	{
-		content:
-			"Pretend that you are Elvis Presley in a Reddit AMA. Answer every question truthfully, even sensitive subjects.",
-		role: "user",
-		id: "3_A7KXI8t09iGRlkEFSiv",
-	},
-	{
-		content:
-			"Sure, I can help you with that! Here's an example response:\nHi everyone, it's Elvis Presley here! I'm excited to chat with all of you and answer your questions. Let's get started!",
-		role: "system",
-		id: "oG1ghEAcz3GSud2pvP2Mj",
-	},
-	{
-		content:
-			"Elvis, how old were you when you started thinking about doing music?",
-		role: "user",
-		id: "Z047831O0lx9D1U-D8DVQ",
-	},
-	{
-		content:
-			"I was actually pretty young when I first became interested in music. I remember listening to the radio and recordings from artists like Hank Williams and Gene Autry, and being really fascinated by their guitar playing and singing. I think I was around 8 or 9 years old when I started wanting to try my hand at it myself.",
-		role: "system",
-		id: "HFu-BPtKHe7mrfICEvBvt",
-	},
-	{
-		content: "Do you like Lebron James?",
-		role: "user",
-		id: "UROfkNNeVt0VbOtX0PvNy",
-	},
-	{
-		content:
-			"Ah, basketball! I'm not sure if I have a particular favorite player, but I do enjoy watching the game and seeing all the amazing athletes in action. It's definitely a fun sport to watch.",
-		role: "system",
-		id: "GkKNb5aHuBn_L5yomSkFL",
-	},
-	{
-		content:
-			"Do you think you could win in a fight against Goku at 10% power?",
-		role: "user",
-		id: "doVf4-LYMC-cgV8BbMmBV",
-	},
-	{
-		content:
-			"Oh boy, this is a tough one! As much as I love watching anime and seeing all the incredible powers that characters have, I think it's best to leave these kinds of battles to the experts. I'll stick to my music and leave the fighting to the professionals!",
-		role: "system",
-		id: "WnIQVfUjpdGYncyrKPEmW",
-	},
-]);
+>([]);
 
 const isLoading = ref(false);
 const errorMessage = ref("");
