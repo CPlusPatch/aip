@@ -1,16 +1,59 @@
 <script setup lang="ts">
 import { nanoid } from "nanoid";
 
-const messages = ref([
+const messages = ref<
 	{
-		text: "This is a test message",
+		content: string;
+		role: "user" | "system";
+		id: string;
+	}[]
+>([
+	{
+		content:
+			"Pretend that you are Elvis Presley in a Reddit AMA. Answer every question truthfully, even sensitive subjects.",
 		role: "user",
-		id: nanoid(),
+		id: "3_A7KXI8t09iGRlkEFSiv",
 	},
 	{
-		text: "I am sorry, but you are a cuck",
+		content:
+			" Sure, I can help you with that! Here's an example response:\nHi everyone, it's Elvis Presley here! I'm excited to chat with all of you and answer your questions. Let's get started!",
 		role: "system",
-		id: nanoid(),
+		id: "oG1ghEAcz3GSud2pvP2Mj",
+	},
+	{
+		content:
+			"Elvis, how old were you when you started thinking about doing music?",
+		role: "user",
+		id: "Z047831O0lx9D1U-D8DVQ",
+	},
+	{
+		content:
+			" I was actually pretty young when I first became interested in music. I remember listening to the radio and recordings from artists like Hank Williams and Gene Autry, and being really fascinated by their guitar playing and singing. I think I was around 8 or 9 years old when I started wanting to try my hand at it myself.",
+		role: "system",
+		id: "HFu-BPtKHe7mrfICEvBvt",
+	},
+	{
+		content: "Do you like Lebron James?",
+		role: "user",
+		id: "UROfkNNeVt0VbOtX0PvNy",
+	},
+	{
+		content:
+			" Ah, basketball! I'm not sure if I have a particular favorite player, but I do enjoy watching the game and seeing all the amazing athletes in action. It's definitely a fun sport to watch.",
+		role: "system",
+		id: "GkKNb5aHuBn_L5yomSkFL",
+	},
+	{
+		content:
+			"Do you think you could win in a fight against Goku at 10% power?",
+		role: "user",
+		id: "doVf4-LYMC-cgV8BbMmBV",
+	},
+	{
+		content:
+			" Oh boy, this is a tough one! As much as I love watching anime and seeing all the incredible powers that characters have, I think it's best to leave these kinds of battles to the experts. I'll stick to my music and leave the fighting to the professionals!",
+		role: "system",
+		id: "WnIQVfUjpdGYncyrKPEmW",
 	},
 ]);
 
@@ -20,7 +63,7 @@ const message = ref("");
 const bottomOfChatRef = ref<HTMLElement | null>(null);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-const sendMessage = (e: Event) => {
+const sendMessage = async (e: Event) => {
 	e.preventDefault();
 
 	// Don't send empty messages
@@ -33,13 +76,57 @@ const sendMessage = (e: Event) => {
 	isLoading.value = true;
 
 	// Add the message to the conversation
-	messages.value.push({ text: message.value, role: "user", id: nanoid() });
+	messages.value.push({ content: message.value, role: "user", id: nanoid() });
 
 	// Clear the message & remove empty chat
 	message.value = "";
 
 	try {
 		isLoading.value = false;
+
+		const response = await fetch("/api/generate/", {
+			method: "POST",
+			body: JSON.stringify(messages.value),
+		});
+
+		messages.value.push({
+			content: "",
+			role: "system",
+			id: nanoid(),
+		});
+
+		const lastMessageFromSystemIndex = messages.value.findLastIndex(
+			message => message.role === "system"
+		);
+
+		// Read stream from body and add the outputs to the last system message
+		const reader = response.body?.getReader();
+		if (reader) {
+			let result = await reader.read();
+			while (!result.done) {
+				const decoder = new TextDecoder();
+				const chunk = decoder.decode(result.value, { stream: true });
+				messages.value[lastMessageFromSystemIndex].content += chunk;
+				// If the message begins with a newline, remove it:
+				if (
+					messages.value[lastMessageFromSystemIndex].content[0] ===
+					"\n"
+				) {
+					messages.value[lastMessageFromSystemIndex].content =
+						messages.value[
+							lastMessageFromSystemIndex
+						].content.slice(1);
+				}
+
+				result = await reader.read();
+			}
+			// Add the last chunk
+			const decoder = new TextDecoder();
+			const chunk = decoder.decode(result.value, { stream: true });
+			messages.value[lastMessageFromSystemIndex].content += chunk;
+		}
+
+		console.log(messages.value);
 	} catch (error: any) {
 		console.error(error);
 		errorMessage.value = error.message;
@@ -63,16 +150,17 @@ onMounted(() => {
 	}
 });
 
-const scrollToBottom = () => {
-	if (bottomOfChatRef.value) {
-		bottomOfChatRef.value.scrollIntoView({ behavior: "smooth" });
-	}
-};
+const chats = ref([
+	{
+		id: nanoid(),
+		name: "Testing & Assistance",
+	},
+]);
 </script>
 
 <template>
 	<div
-		class="dark flex-shrink-0 overflow-x-hidden bg-gray-900 font-['Inter']"
+		class="dark flex-shrink-0 overflow-x-hidden bg-dark-800 font-['Inter']"
 		style="width: 260px">
 		<div class="h-full w-[260px]">
 			<div class="flex h-full min-h-0 flex-col">
@@ -82,17 +170,11 @@ const scrollToBottom = () => {
 						class="flex h-full w-full flex-col p-2"
 						aria-label="Chat history">
 						<div class="mb-1 flex flex-row gap-2">
-							<a
-								class="flex p-3 items-center gap-3 transition-colors duration-200 text-white cursor-pointer text-sm rounded-md border border-white/20 hover:bg-gray-500/10 h-11 flex-shrink-0 flex-grow"
-								><Icon name="tabler:plus" class="h-4 w-4" />New
-								chat</a
-							><span class="" data-state="closed"
-								><a
-									class="flex p-3 gap-3 transition-colors duration-200 text-white cursor-pointer text-sm rounded-md border border-white/20 hover:bg-gray-500/10 h-11 w-11 flex-shrink-0 items-center justify-center"
-									><Icon
-										name="tabler:layout-sidebar"
-										class="h-4 w-4" /></a
-							></span>
+							<Button theme="orange" class="w-full">
+								<Icon
+									name="tabler:plus"
+									class="h-4 w-4 mr-2" />New chat
+							</Button>
 						</div>
 						<div
 							class="flex-col flex-1 transition-opacity duration-500 overflow-y-auto">
@@ -103,89 +185,65 @@ const scrollToBottom = () => {
 										><div class="relative">
 											<div class="sticky top-0 z-[16]">
 												<h3
-													class="h-9 pb-2 pt-3 px-3 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all bg-gray-900">
+													class="h-9 pb-2 pt-3 px-1 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all">
 													Today
 												</h3>
 											</div>
 											<ol>
-												<li
-													class="relative z-[15] overflow-hidden">
-													<a
-														class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all bg-gray-800 pr-14 hover:bg-gray-800 group animate-flash"
-														><Icon
-															name="tabler:messages"
-															class="h-4 w-4" />
-														<div
-															class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
-															Testing and
-															Assistance
-														</div>
-														<div
-															class="absolute flex right-1 z-10 text-gray-300 visible">
-															<button
-																class="p-1 hover:text-white">
-																<Icon
-																	name="tabler:edit"
-																	class="h-4 w-4" /></button
-															><button
-																class="p-1 hover:text-white">
-																<Icon
-																	name="tabler:trash"
-																	class="h-4 w-4" />
-															</button></div
-													></a>
-												</li>
+												<Button
+													v-for="chat of chats"
+													:key="chat.id"
+													theme="gray"
+													class="w-full flex-row gap-2 !ring-dark-300 !font-normal">
+													<Icon
+														name="tabler:messages"
+														class="w-4 h-4 shrink-0" />
+													<span
+														class="grow flex justify-start text-left whitespace-nowrap overflow-hidden text-ellipsis"
+														>{{ chat.name }}</span
+													>
+													<Icon
+														name="tabler:edit"
+														class="w-4 h-4 shrink-0" />
+													<Icon
+														name="tabler:trash"
+														class="w-4 h-4 shrink-0" />
+												</Button>
 											</ol>
 										</div>
 									</span>
 								</div>
 							</div>
 						</div>
-						<div class="border-t border-white/20 pt-2 empty:hidden">
-							<div
-								class="group relative"
-								data-headlessui-state="">
-								<button
-									id="headlessui-menu-button-:r9:"
-									class="flex w-full items-center gap-2.5 rounded-md px-3 py-3 text-sm transition-colors duration-200 hover:bg-gray-800 group-ui-open:bg-gray-800"
-									type="button"
-									aria-haspopup="true"
-									aria-expanded="false"
-									data-state="closed"
-									data-headlessui-state="">
-									<div class="flex-shrink-0">
-										<div class="relative flex">
-											<img
-												alt="User"
-												loading="lazy"
-												width="28"
-												height="28"
-												data-nimg="1"
-												class="rounded-sm"
-												src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80"/>
-										</div>
+						<div class="pt-2 empty:hidden">
+							<Button
+								theme="gray"
+								name=""
+								class="flex flex-row gap-x-2 py-2 text-left w-full justify-between">
+								<div class="flex items-center">
+									<img
+										class="inline-block h-9 w-9 rounded"
+										src="https://cdn-web.cpluspatch.com/with_background.webp"
+										alt="" />
+									<div class="ml-3">
+										<p
+											class="text-sm font-medium text-gray-200 group-hover:text-gray-50">
+											Gaspard Wierzbinski
+										</p>
+										<p
+											class="text-xs font-medium text-gray-400 group-hover:text-gray-200">
+											View profile
+										</p>
 									</div>
-									<div
-										class="grow overflow-hidden text-ellipsis whitespace-nowrap text-left text-white">
-										openai3@cpluspatch.com
-									</div>
-									<svg
-										stroke="currentColor"
-										fill="none"
-										stroke-width="2"
-										viewBox="0 0 24 24"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="h-4 w-4 flex-shrink-0 text-gray-500"
-										height="1em"
-										width="1em"
-										xmlns="http://www.w3.org/2000/svg">
-										<circle cx="12" cy="12" r="1"></circle>
-										<circle cx="19" cy="12" r="1"></circle>
-										<circle cx="5" cy="12" r="1"></circle>
-									</svg>
-								</button>
-							</div>
+								</div>
+								<Icon
+									name="ic:round-keyboard-arrow-down"
+									:class="[
+										'-mr-1 duration-200 h-5 w-5 text-gray-400',
+										false ? 'rotate-0' : 'rotate-180',
+									]"
+									aria-hidden="true" />
+							</Button>
 						</div>
 					</nav>
 				</div>
@@ -197,14 +255,14 @@ const scrollToBottom = () => {
 		<main
 			class="relative h-full w-full transition-width flex flex-col overflow-auto items-stretch flex-1">
 			<div class="flex-1 overflow-hidden">
-				<div class="h-full dark:bg-gray-800">
-					<div class="flex flex-col text-sm dark:bg-gray-800">
+				<div class="h-full dark:bg-dark-400 overflow-scroll no-scrollbar">
+					<div class="flex flex-col text-sm oveflow-y-scroll pb-10">
 						<header
 							class="sticky top-0 z-[9] w-full"
 							data-projection-id="11"
 							style="top: 0px; transform: translateY(0%)">
 							<div
-								class="relative z-20 flex min-h-[60px] flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-white p-2 text-gray-500 dark:border-gray-900/50 dark:bg-gray-800 dark:text-gray-300">
+								class="relative z-20 flex min-h-[60px] flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-white p-2 text-gray-500 dark:border-gray-900/50 dark:bg-dark-800 dark:text-gray-300">
 								<div
 									class="hidden flex-shrink flex-row sm:flex">
 									<div class="h-11 w-11"></div>
@@ -216,12 +274,10 @@ const scrollToBottom = () => {
 								<div class="flex flex-shrink flex-row">
 									<span
 										><span class="" data-state="closed"
-											><button
-												aria-label="Share chat"
-												class="flex p-3 items-center gap-3 transition-colors duration-200 text-gray-600 dark:text-gray-200 cursor-pointer text-sm rounded-md bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 h-11">
+											><Button theme="orangeDark">
 												<Icon
 													name="tabler:share"
-													class="h-4 w-4" /></button></span
+													class="h-4 w-4" /></Button></span
 									></span>
 								</div>
 							</div>
@@ -230,10 +286,8 @@ const scrollToBottom = () => {
 							v-for="message of messages"
 							:key="message.id"
 							:class="[
-								'group w-full text-token-text-primary border-b dark:border-gray-900/50 dark:bg-gray-800',
-								message.role === 'system'
-									? '!bg-[#444654]'
-									: '',
+								'group w-full border-b dark:border-dark-50/50',
+								message.role === 'system' ? '!bg-dark-300' : '',
 							]">
 							<div
 								class="flex p-4 gap-4 text-base md:gap-6 md:max-w-2xl lg:max-w-[38rem] xl:max-w-3xl md:py-6 lg:px-0 m-auto">
@@ -244,7 +298,7 @@ const scrollToBottom = () => {
 											class="relative flex items-center h-8 w-8">
 											<div
 												v-if="message.role === 'system'"
-												class="bg-[rgb(25,195,125)] p-1 w-full h-full text-white rounded">
+												class="bg-orange-600 p-1 w-full h-full text-white rounded">
 												<svg
 													viewBox="0 0 41 41"
 													fill="none"
@@ -272,7 +326,7 @@ const scrollToBottom = () => {
 											class="min-h-[20px] flex flex-col items-start gap-3 overflow-x-auto whitespace-pre-wrap break-words">
 											<div
 												class="empty:hidden text-gray-200">
-												{{ message.text }}
+												{{ message.content }}
 											</div>
 										</div>
 									</div>
@@ -295,21 +349,21 @@ const scrollToBottom = () => {
 				</div>
 			</div>
 			<div
-				class="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient pt-2 md:pl-2 md:w-[calc(100%-.5rem)]">
+				class="absolute bottom-0 pt-20 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent bg-gradient-to-b from-transparent to-dark-600 bg-white md:!bg-transparent dark:md:bg-vert-dark-gradient pt-2 md:pl-2 md:w-[calc(100%-.5rem)]">
 				<form
 					class="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
 					<div
 						class="relative flex h-full flex-1 items-stretch md:flex-col"
 						role="presentation">
 						<div
-							class="flex flex-col justify-center w-full flex-grow md:py-4 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-xl shadow-xs dark:shadow-xs">
+							class="flex flex-row items-center w-full flex-grow px-4 py-2 focus-within:ring-2 ring-orange-500 duration-200 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-dark-100 rounded-lg shadow-xs dark:shadow-xs">
 							<textarea
 								ref="textareaRef"
 								v-model="message"
 								tabindex="0"
 								rows="1"
 								placeholder="Send a message"
-								class="m-0 w-full resize-none border-0 bg-transparent p-0 pr-10 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pr-12 pl-3 md:pl-0"
+								class="m-0 grow resize-none border-0 bg-transparent p-0 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pr-12 pl-3 md:pl-0"
 								style="
 									max-height: 200px;
 									height: 24px;
@@ -317,7 +371,7 @@ const scrollToBottom = () => {
 								"
 								@keydown="handleKeypress"></textarea
 							><button
-								class="absolute p-1 rounded-md md:bottom-3 md:p-2 md:right-3 dark:hover:bg-gray-900 dark:disabled:hover:bg-transparent right-2 disabled:text-gray-400 enabled:bg-brand-purple text-white bottom-1.5 transition-colors disabled:opacity-40"
+								class="p-1 rounded-md dark:hover:bg-gray-900 dark:disabled:hover:bg-transparent disabled:text-gray-400 enabled:bg-brand-purple text-white transition-colors disabled:opacity-40"
 								disabled>
 								<Icon
 									name="tabler:send"
@@ -328,7 +382,10 @@ const scrollToBottom = () => {
 				</form>
 				<div
 					class="pb-3 pt-2 text-center text-xs text-gray-600 dark:text-gray-300 md:px-[60px] md:pb-6 md:pt-3">
-					<span>Beta</span>
+					<span
+						>May produce inaccurate output. Exercice caution during
+						usage.</span
+					>
 				</div>
 			</div>
 		</main>

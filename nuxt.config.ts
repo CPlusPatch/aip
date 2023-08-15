@@ -27,6 +27,7 @@ export default defineNuxtConfig({
 			htmlAttrs: { lang: "en-us" },
 		},
 	},
+	ssr: false,
 	nitro: {
 		compressPublicAssets: true,
 		routeRules: {
@@ -50,8 +51,7 @@ export default defineNuxtConfig({
 	},
 	runtimeConfig: {
 		public: {
-			siteUrl:
-				process.env.NUXT_PUBLIC_SITE_URL,
+			siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
 			siteName: "",
 			siteDescription: "",
 			language: "en-US", // prefer more explicit language codes like `en-AU` over `en`,
@@ -62,9 +62,7 @@ export default defineNuxtConfig({
 		plugins: [
 			nodePolyfills({
 				// To exclude specific polyfills, add them to this list.
-				exclude: [
-					
-				],
+				exclude: [],
 				// Whether to polyfill `node:` protocol imports.
 				protocolImports: true,
 			}),
