@@ -178,7 +178,7 @@ const emit = defineEmits<{
 				</div>
 			</div>
 			<div
-				class="absolute bottom-0 pt-20 left-0 w-full border-t md:border-t-0 border-transparent md:dark:border-transparent bg-gradient-to-b from-transparent to-dark-600 bg-transparent dark:md:bg-vert-dark-gradient pt-2 md:pl-2 md:w-[calc(100%-.5rem)]">
+				class="absolute bottom-0 pt-20 left-0 w-full bg-gradient-to-b from-transparent to-dark-600 bg-transparent dark:md:bg-vert-dark-gradient pt-2 md:pl-2 md:w-[calc(100%-.5rem)]">
 				<form
 					class="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
 					<div
