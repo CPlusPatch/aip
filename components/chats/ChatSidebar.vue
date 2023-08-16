@@ -59,11 +59,13 @@ const deleteChat = (e: Event, id: number) => {
 						class="flex h-full w-full flex-col p-2"
 						aria-label="Chat history">
 						<div class="mb-1 flex flex-row gap-2">
-							<Button theme="orange" class="w-full">
-								<Icon
-									name="tabler:plus"
-									class="h-4 w-4 mr-2" />New chat
-							</Button>
+							<NuxtLink to="/" class="w-full">
+								<Button theme="orange" class="w-full">
+									<Icon
+										name="tabler:plus"
+										class="h-4 w-4 mr-2" />New chat
+								</Button>
+							</NuxtLink>
 						</div>
 						<div
 							class="flex-col flex-1 transition-opacity duration-500 overflow-y-auto">
