@@ -132,6 +132,10 @@ onMounted(() => {
 		textareaRef.value.style.height = `${textareaRef.value.scrollHeight}px`;
 	}
 });
+
+const emit = defineEmits<{
+	(event: "sidebar-toggle"): void;
+}>();
 </script>
 
 <template>
@@ -149,8 +153,10 @@ onMounted(() => {
 							<div
 								class="relative z-20 flex min-h-[60px] flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-white p-2 text-gray-500 dark:border-gray-900/50 dark:bg-dark-800 dark:text-gray-300">
 								<div
-									class="hidden flex-shrink flex-row sm:flex">
-									<div class="h-11 w-11"></div>
+									class="md:hidden flex">
+									<Button @click="emit('sidebar-toggle')" theme="gray" class="!px-2 !py-2">
+										<Icon name="tabler:menu" class="w-6 h-6" />
+									</Button>
 								</div>
 								<div
 									class="flex flex-1 flex-grow items-center gap-1 p-1 text-gray-600 dark:text-gray-200 sm:justify-center sm:p-0">

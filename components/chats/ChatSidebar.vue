@@ -49,9 +49,8 @@ const deleteChat = (e: Event, id: number) => {
 
 <template>
 	<div
-		class="dark flex-shrink-0 overflow-x-hidden bg-dark-800 font-['Inter'] md:block hidden"
-		style="width: 260px">
-		<div class="h-full w-[260px]">
+		class="dark flex-shrink-0 overflow-x-hidden bg-dark-800 font-['Inter'] block md:w-[268px] w-full h-full">
+		<div class="h-full">
 			<div class="flex h-full min-h-0 flex-col">
 				<div
 					class="scrollbar-trigger relative h-full w-full flex-1 items-start border-white/20">
