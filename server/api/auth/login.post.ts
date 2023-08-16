@@ -24,8 +24,6 @@ export default defineEventHandler(async event => {
 		username: body.username,
 	});
 
-	console.log(user);
-
 	if (
 		!(
 			user &&

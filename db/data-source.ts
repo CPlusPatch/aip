@@ -2,6 +2,8 @@ import { DataSource } from "typeorm";
 import { User } from "./entities/User";
 import "reflect-metadata";
 import { Token } from "./entities/Token";
+import { Chat } from "./entities/Chat";
+import { Personality } from "./entities/Personality";
 
 const AppDataSource = new DataSource({
 	type: "postgres",
@@ -12,7 +14,7 @@ const AppDataSource = new DataSource({
 	// database: "./web.sqlite",
 	database: "aip",
 	synchronize: true,
-	entities: [User, Token],
+	entities: [User, Token, Chat, Personality],
 });
 
 export { AppDataSource };
