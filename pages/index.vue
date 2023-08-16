@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { marked } from "marked";
 import { nanoid } from "nanoid";
 
 const messages = ref<
@@ -296,9 +297,15 @@ if (!user)
 										<div
 											class="min-h-[20px] flex flex-col items-start gap-3 overflow-x-auto whitespace-pre-wrap break-words">
 											<div
-												class="empty:hidden text-gray-200">
-												{{ message.content }}
-											</div>
+												class="empty:hidden text-gray-200 prose"
+												v-html="
+													marked(
+														message.content.trim(),
+														{
+															headerIds: false,
+														}
+													)
+												"></div>
 										</div>
 									</div>
 									<div
@@ -362,3 +369,19 @@ if (!user)
 		</main>
 	</div>
 </template>
+
+<style>
+.prose :where(p, ul, ol, pre):not(:where(.not-prose, .not-prose *)) {
+	margin: 0;
+}
+
+.prose :where(h3):not(:where(.not-prose, .not-prose *)) {
+	margin: 0.5em 0 0.5em;
+	font-size: 1.375em;
+}
+
+.prose :where(h2):not(:where(.not-prose, .not-prose *)) {
+	margin: 0.5em 0 0.5em;
+	font-size: 1.375em;
+}
+</style>
