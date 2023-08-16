@@ -17,6 +17,8 @@ if (!chat.data.value) {
 	});
 }
 
+navigateTo(`/chats/${chat.data.value.id}`);
+
 useHead({
 	title: "Chat · AIP",
 });
