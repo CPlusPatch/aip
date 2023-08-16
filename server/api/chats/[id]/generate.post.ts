@@ -20,7 +20,10 @@ export default defineEventHandler(async event => {
 
 	event.node.res.writeHead(200, { "Content-Type": "text/plain" });
 
-	const messages = await readBody<{ role: "user" | "system"; content: string; id: string }[]>(event);
+	const body = await readBody<{
+		messages: { role: "user" | "system"; content: string; id: string }[];
+		temperature?: number;
+	}>(event);
 
 	// Get relevant chat from database and update messages
 	const chatId = event.context.params?.id ?? "";
@@ -44,7 +47,7 @@ export default defineEventHandler(async event => {
 		});
 	}
 
-	chat.messages = messages;
+	chat.messages = body.messages;
 
 	await AppDataSource.getRepository(Chat).save(chat);
 
@@ -58,9 +61,10 @@ export default defineEventHandler(async event => {
 	let newMessage = "";
 
 	const stream = await openai.chat.completions.create({
-		messages: messages as any,
+		messages: body.messages as any,
 		model: config.ai.model,
 		stream: true,
+		temperature: body.temperature ?? 0.7,
 		max_tokens: 4096,
 	});
 
