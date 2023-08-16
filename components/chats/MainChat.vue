@@ -157,13 +157,12 @@ onMounted(() => {
 									<span>Default (Pro Uncensored)</span>
 								</div>
 								<div class="flex flex-shrink flex-row">
-									<span
-										><span class="" data-state="closed"
-											><Button theme="orangeDark">
-												<Icon
-													name="tabler:share"
-													class="h-4 w-4" /> </Button></span
-									></span>
+									<Button theme="gray" class="">
+										<Icon
+											name="tabler:cpu"
+											class="h-4 w-4 mr-1" />
+										{{ user.credits ?? 0 }}
+									</Button>
 								</div>
 							</div>
 						</header>

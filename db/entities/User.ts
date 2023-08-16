@@ -46,6 +46,11 @@ export class User {
 	@UpdateDateColumn()
 	edited_at?: Date;
 
+	@Column("int", {
+		default: 0,
+	})
+	credits: number;
+
 	@Column("jsonb", { nullable: true })
 	oauthAccounts?: { provider: string; id: string }[];
 }

@@ -2,6 +2,16 @@
 import { User } from "~/db/entities/User";
 const token = useCookie("token");
 
+const user = (await useFetch(`/api/user/get`)).data.value as User;
+
+if (!user)
+	navigateTo(
+		"/auth/login?" +
+		new URLSearchParams({
+			next: "/",
+		})
+	);
+
 const chat = await useFetch("/api/chats/create", {
 	method: "POST",
 	headers: {
@@ -26,16 +36,6 @@ useHead({
 definePageMeta({
 	middleware: "auth",
 });
-
-const user = (await useFetch(`/api/user/get`)).data.value as User;
-
-if (!user)
-	navigateTo(
-		"/auth/login?" +
-			new URLSearchParams({
-				next: "/",
-			})
-	);
 </script>
 
 <template>
