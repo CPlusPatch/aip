@@ -22,9 +22,7 @@ export class User {
 	@Column("varchar")
 	display_name: string;
 
-	@Column("varchar", {
-		select: false,
-	})
+	@Column("varchar")
 	password: string; // In the format hashedpassword:salt
 
 	@Column("varchar", {
