@@ -180,14 +180,14 @@ onMounted(() => {
 						class="relative flex h-full flex-1 items-stretch md:flex-col"
 						role="presentation">
 						<div
-							class="flex flex-row items-center w-full flex-grow px-4 py-2 focus-within:ring-2 ring-orange-500 duration-200 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-dark-100 rounded-lg shadow-xs dark:shadow-xs">
+							class="flex flex-row items-center w-full flex-grow px-2 py-2 focus-within:ring-2 ring-orange-500 duration-200 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-dark-100 rounded-lg shadow-xs dark:shadow-xs">
 							<textarea
 								ref="textareaRef"
 								v-model="message"
 								tabindex="0"
 								rows="1"
 								placeholder="Send a message"
-								class="m-0 grow resize-none border-0 bg-transparent p-0 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pr-12 pl-3 md:pl-0"
+								class="m-0 grow resize-none ml-2 border-0 bg-transparent p-0 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pr-12 pl-3 md:pl-0"
 								style="
 									max-height: 200px;
 									height: 24px;
@@ -196,6 +196,7 @@ onMounted(() => {
 								@keydown="handleKeypress"></textarea
 							><button
 								class="p-1 rounded-md dark:hover:bg-gray-900 dark:disabled:hover:bg-transparent disabled:text-gray-400 enabled:bg-brand-purple text-white transition-colors disabled:opacity-40"
+								:disabled="message.length === 0"
 								@click="sendMessage">
 								<Icon
 									name="tabler:send"
