@@ -64,6 +64,10 @@ const sendMessage = async (e: Event) => {
 			{
 				method: "POST",
 				body: JSON.stringify(messages.value),
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token.value}`,
+				},
 			}
 		);
 

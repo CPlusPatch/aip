@@ -37,6 +37,7 @@ export default defineEventHandler(async event => {
 	if (dbUser) {
 		return {
 			...dbUser,
+			password: "",
 			display_name: body.display_name ?? dbUser.display_name,
 		};
 	} else {

@@ -30,8 +30,13 @@ export default defineEventHandler(async event => {
 			user: true,
 		},
 		order: {
-			edited_at: "DESC"
-		}
+			edited_at: "DESC",
+		},
+	});
+
+	chats.forEach(chat => {
+		// Delete the user's password from the chat
+		chat.user.password = "";
 	});
 
 	if (chats) {

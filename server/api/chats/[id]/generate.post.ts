@@ -4,8 +4,20 @@ import OpenAI from "openai";
 import { AppDataSource } from "~/db/data-source";
 import { Chat } from "~/db/entities/Chat";
 import { getConfig } from "~/utils/config";
+import { getUserByToken } from "~/utils/tokens";
 
 export default defineEventHandler(async event => {
+	const user = await getUserByToken(
+		event.node.req.headers.authorization?.split(" ")[1] ?? ""
+	);
+
+	// Throw an error if the sender is not authorized.
+	if (!user) {
+		throw createError({
+			statusCode: 401,
+		});
+	}
+
 	event.node.res.writeHead(200, { "Content-Type": "text/plain" });
 
 	const messages = await readBody<{ role: "user" | "system"; content: string; id: string }[]>(event);
@@ -13,8 +25,16 @@ export default defineEventHandler(async event => {
 	// Get relevant chat from database and update messages
 	const chatId = event.context.params?.id ?? "";
 
-	const chat = await AppDataSource.getRepository(Chat).findOneBy({
-		id: Number(chatId),
+	const chat = await AppDataSource.getRepository(Chat).findOne({
+		where: {
+			id: Number(chatId),
+			user: {
+				id: user.id,
+			}
+		},
+		relations: {
+			user: true,
+		},
 	});
 
 	if (!chat) {

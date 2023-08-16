@@ -33,9 +33,8 @@ export default defineEventHandler(async event => {
 	});
 
 	
-	if (chat) {
-		const deletedChats = await AppDataSource.getRepository(Chat).remove([chat]);
-		return deletedChats;
+	if (chat && await AppDataSource.getRepository(Chat).remove([chat])) {
+		return true;
 	} else {
 		throw createError({
 			statusCode: 500,
