@@ -19,5 +19,12 @@ export interface Config {
 	ai: {
 		base_url: string;
 		model: string;
+		models: {
+			id: string;
+			name: string;
+			size: string;
+			uncensored: boolean;
+			port: number;
+		}[]
 	};
 }

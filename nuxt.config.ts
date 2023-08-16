@@ -48,6 +48,7 @@ export default defineNuxtConfig({
 				},
 			},
 		},
+		plugins: ["./clear-lockfile.server.ts"]
 	},
 	runtimeConfig: {
 		public: {
