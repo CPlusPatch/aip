@@ -53,10 +53,36 @@ export default defineEventHandler(async event => {
 					// @ts-ignore
 					stripeEvent.data.object.id,
 					{
-						expand: ["line_items"],
+						expand: ["line_items", "invoice"],
 					}
 				);
 			const lineItems = sessionWithLineItems.line_items;
+
+			const invoice = await Invoice.findOne({
+				where: {
+					transaction: {
+						// @ts-ignore
+						stripe_id: stripeEvent.data.object.id,
+					},
+				},
+				relations: {
+					user: true,
+					transaction: true,
+				},
+			});
+
+			if (!invoice) {
+				throw createError({
+					statusCode: 404,
+					message: "Invoice not found",
+				});
+			}
+
+			invoice.data = sessionWithLineItems.invoice as Stripe.Invoice;
+			invoice.stripe_id = (
+				sessionWithLineItems.invoice as Stripe.Invoice
+			).id;
+			await invoice.save();
 
 			lineItems?.data.forEach(async lineItem => {
 				if (lineItem.price?.id === config.stripe.products.premium) {
@@ -85,43 +111,6 @@ export default defineEventHandler(async event => {
 					}
 				}
 			});
-
-			break;
-		}
-
-		case "invoice.payment_succeeded": {
-			const invoiceObject = stripeEvent.data.object as Stripe.Invoice;
-
-			console.log(stripeEvent);
-
-			const checkoutSessions = await stripe.checkout.sessions.list({
-				payment_intent: invoiceObject.payment_intent as string,
-			});
-
-			const checkoutSession = checkoutSessions.data[0];
-
-			const invoice = await Invoice.findOne({
-				where: {
-					transaction: {
-						stripe_id: checkoutSession.id,
-					},
-				},
-				relations: {
-					user: true,
-					transaction: true,
-				},
-			});
-
-			if (!invoice) {
-				throw createError({
-					statusCode: 404,
-					message: "Invoice not found",
-				});
-			}
-
-			invoice.data = invoiceObject;
-			invoice.stripe_id = invoiceObject.id;
-			await invoice.save();
 
 			break;
 		}
