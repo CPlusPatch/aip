@@ -53,7 +53,7 @@ export default defineEventHandler(async event => {
 			quantity: product.quantity,
 		})),
 		mode: "subscription",
-		customer: user.stripe_id,
+		customer: user.stripe_id || undefined,
 		success_url: `${url.origin}/settings/invoice`,
 		cancel_url: `${url.origin}/settings/invoice`,
 	});
