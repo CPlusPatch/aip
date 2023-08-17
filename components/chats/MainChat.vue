@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nanoid } from "nanoid";
-import { User } from "~/db/entities/User";
+import { Subscriptions, User } from "~/db/entities/User";
 
 const props = defineProps<{
 	id: number;
@@ -32,7 +32,7 @@ if (!chat.data.value) {
 const messages = ref<
 	{
 		content: string;
-		role: "user" | "system";
+		role: "user" | "system" | "assistant";
 		id: string;
 	}[]
 >(chat.data.value.messages);
@@ -56,8 +56,6 @@ const sendMessage = async (e: Event) => {
 	message.value = "";
 
 	try {
-		isLoading.value = false;
-
 		const response = await fetch(
 			`/api/chats/${chat.data.value?.id}/generate`,
 			{
@@ -74,12 +72,12 @@ const sendMessage = async (e: Event) => {
 
 		messages.value.push({
 			content: "",
-			role: "system",
+			role: "assistant",
 			id: nanoid(),
 		});
 
 		const lastMessageFromSystemIndex = messages.value.findLastIndex(
-			message => message.role === "system"
+			message => message.role === "assistant"
 		);
 
 		// Read stream from body and add the outputs to the last system message
@@ -87,6 +85,7 @@ const sendMessage = async (e: Event) => {
 		if (reader) {
 			let result = await reader.read();
 			while (!result.done) {
+				if (isLoading.value) isLoading.value = false;
 				const decoder = new TextDecoder();
 				const chunk = decoder.decode(result.value, { stream: true });
 				messages.value[lastMessageFromSystemIndex].content += chunk;
@@ -136,6 +135,26 @@ onMounted(() => {
 const emit = defineEmits<{
 	(event: "sidebar-toggle"): void;
 }>();
+
+const buyPremium = () => {
+	useFetch(`/api/billing/order`, {
+		method: "POST",
+		body: JSON.stringify({
+			products: [
+				{
+					stripe_id: "price_1Nfsw9JngIiJxML9lBFyuVlD",
+					quantity: 1,
+				},
+			],
+		}),
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+	}).then(res => {
+		res.data.value?.url && window.open(res.data.value.url, "_blank");
+	});
+};
 </script>
 
 <template>
@@ -152,10 +171,14 @@ const emit = defineEmits<{
 							style="top: 0px; transform: translateY(0%)">
 							<div
 								class="relative z-20 flex min-h-[60px] flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-white p-2 text-gray-500 dark:border-gray-900/50 dark:bg-dark-800 dark:text-gray-300">
-								<div
-									class="md:hidden flex">
-									<Button @click="emit('sidebar-toggle')" theme="gray" class="!px-2 !py-2">
-										<Icon name="tabler:menu" class="w-6 h-6" />
+								<div class="md:hidden flex">
+									<Button
+										theme="gray"
+										class="!px-2 !py-2"
+										@click="emit('sidebar-toggle')">
+										<Icon
+											name="tabler:menu"
+											class="w-6 h-6" />
 									</Button>
 								</div>
 								<div
@@ -163,16 +186,40 @@ const emit = defineEmits<{
 									<span>Default (Pro Uncensored)</span>
 								</div>
 								<div class="flex flex-shrink flex-row">
-									<Button theme="gray" class="">
+									<Button
+										theme="gray"
+										:class="[
+											user.subscription ===
+												Subscriptions.PREMIUM &&
+												'!bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500',
+										]"
+										@click="buyPremium">
 										<Icon
 											name="tabler:cpu"
 											class="h-4 w-4 mr-1" />
-										{{ user.credits ?? 0 }}
+										{{
+											user.subscription ===
+											Subscriptions.NONE
+												? user.credits ?? 0
+												: "Infinity"
+										}}
 									</Button>
 								</div>
 							</div>
 						</header>
-						<ChatsChatMessage v-for="message of messages" :key="message.id" :message="message" :user="user" />
+						<ChatsChatMessage
+							v-for="message of messages.filter(
+								m => m.role !== 'system'
+							) as any"
+							:key="message.id"
+							:message="message!"
+							:user="user" />
+						<div
+							v-if="isLoading"
+							class="flex flex-row mx-auto py-5 text-gray-100 items-center gap-3">
+							<Spinner class="fill-orange-500 text-dark-50" />
+							Generating...
+						</div>
 						<div class="h-32 md:h-48 flex-shrink-0"></div>
 					</div>
 				</div>

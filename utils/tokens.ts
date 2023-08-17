@@ -1,4 +1,5 @@
 import { JwksClient } from "jwks-rsa";
+// eslint-disable-next-line import/default
 import jwt from "jsonwebtoken";
 import { User } from "oidc-client-ts";
 import { AppDataSource } from "~/db/data-source";
@@ -25,6 +26,8 @@ export async function getUserByToken(value: string) {
 				username: true,
 				display_name: true,
 				oauthAccounts: true,
+				credits: true,
+				subscription: true,
 			},
 		},
 		where: {
@@ -36,22 +39,27 @@ export async function getUserByToken(value: string) {
 	else return null;
 }
 
-
-export async function validateToken(body: User, provider: Config["oidc_providers"][0]) {
+export async function validateToken(
+	body: User,
+	provider: Config["oidc_providers"][0]
+) {
 	if (!AppDataSource.isInitialized) {
 		await AppDataSource.initialize();
 	}
 
-	const { jwks_uri } = await (
+	const { jwks_uri: jwksUri } = await (
 		await fetch(provider.authority)
 	).json();
 
 	const client = new JwksClient({
-		jwksUri: jwks_uri,
+		jwksUri,
 	});
 
 	const getKey: jwt.GetPublicKeyOrSecret = (header, callback) => {
 		client.getSigningKey(header.kid, function (err, key) {
+			if (err) {
+				throw err;
+			}
 			const signingKey = key?.getPublicKey();
 			callback(null, signingKey);
 		});
@@ -61,7 +69,8 @@ export async function validateToken(body: User, provider: Config["oidc_providers
 
 	// Verify the ID token
 	try {
-		decoded = await new Promise((res, reject) => {
+		decoded = await new Promise((resolve, reject) => {
+			// eslint-disable-next-line import/no-named-as-default-member
 			jwt.verify(
 				body.id_token ?? "",
 				getKey,
@@ -71,7 +80,7 @@ export async function validateToken(body: User, provider: Config["oidc_providers
 						reject(err);
 						// Handle error
 					} else {
-						res(decoded as any);
+						resolve(decoded as any);
 						// ID token is valid, create session for user
 					}
 				}
@@ -81,5 +90,5 @@ export async function validateToken(body: User, provider: Config["oidc_providers
 		throw new Error("Invalid JSON Web Token");
 	}
 
-	return decoded.sub
+	return decoded.sub;
 }

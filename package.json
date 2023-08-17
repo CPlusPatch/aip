@@ -22,7 +22,7 @@
     "@vueuse/nuxt": "^10.2.0",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.0.0",
     "nuxt": "^3.6.2",
     "nuxt-headlessui": "^1.1.4",
     "nuxt-security": "^0.13.0",
@@ -46,6 +46,7 @@
     "pg": "^8.11.0",
     "reflect-metadata": "^0.1.13",
     "smol-toml": "^1.1.1",
+    "stripe": "^12.18.0",
     "typeorm": "0.3.16",
     "uuid": "^9.0.0",
     "webp-converter-browser": "^1.0.3"

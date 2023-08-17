@@ -25,6 +25,15 @@ export interface Config {
 			size: string;
 			uncensored: boolean;
 			port: number;
-		}[]
+		}[];
+	};
+
+	stripe: {
+		secret_api_key: string;
+		public_api_key: string;
+		webhook_secret: string;
+		products: {
+			premium: string;
+		};
 	};
 }

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-named-as-default
 import { readFileSync, writeFileSync } from "fs";
 import { nanoid } from "nanoid";
 import OpenAI from "openai";
@@ -47,7 +46,7 @@ export default defineEventHandler(async event => {
 
 		const body = await readBody<{
 			messages: {
-				role: "user" | "system";
+				role: "user" | "system" | "assistant";
 				content: string;
 				id: string;
 			}[];
@@ -113,17 +112,18 @@ export default defineEventHandler(async event => {
 		chat.messages = [
 			...chat.messages,
 			{
-				role: "system",
+				role: "assistant",
 				content: newMessage,
 				id: nanoid(),
 			},
 		];
 
 		await AppDataSource.getRepository(Chat).save(chat);
-	}
-	finally {
+	} finally {
 		// Get new changes
-		workers = JSON.parse(await readFileSync("/tmp/aip-workers.json", "utf-8"));
+		workers = JSON.parse(
+			await readFileSync("/tmp/aip-workers.json", "utf-8")
+		);
 
 		// Set worker as unoccupied and save changes to disk
 		workers[nextAvailableWorkerIndex].occupied = false;

@@ -31,6 +31,7 @@ export default defineEventHandler(async event => {
 
 	if (body.display_name)
 		dbUser.display_name = DOMPurify.sanitize(body.display_name);
+	if (body.avatar) dbUser.avatar = DOMPurify.sanitize(body.avatar);
 
 	await AppDataSource.getRepository(User).save(dbUser);
 
@@ -39,6 +40,7 @@ export default defineEventHandler(async event => {
 			...dbUser,
 			password: "",
 			display_name: body.display_name ?? dbUser.display_name,
+			avatar: body.avatar ?? dbUser.avatar,
 		};
 	} else {
 		throw createError({

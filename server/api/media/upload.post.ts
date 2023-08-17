@@ -1,6 +1,7 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Role } from "~/db/entities/User";
 import { getUserByToken } from "~/utils/tokens";
+import { getConfig } from "~/utils/config";
 
 export default defineEventHandler(async event => {
 	const user = await getUserByToken(

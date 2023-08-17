@@ -18,7 +18,7 @@ export class Chat {
 	@Column("jsonb")
 	messages: {
 		content: string;
-		role: "user" | "system";
+		role: "user" | "system" | "assistant";
 		id: string;
 	}[];
 

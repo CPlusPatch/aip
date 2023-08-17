@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { UserManager } from "oidc-client-ts";
 import PrimaryContainer from "~/components/layout/PrimaryContainer.vue";
 import Input from "~/components/input/CMInput.vue";
-import { UserManager } from "oidc-client-ts";
 import { Config } from "types/config";
 
 const user = (await useFetch("/api/user/get")).data.value;
@@ -70,7 +70,7 @@ const linkOIDC = async (oidcProvider: Config["oidc_providers"][0]) => {
 	});
 
 	window.location.reload();
-}
+};
 </script>
 
 <template>
@@ -187,23 +187,26 @@ const linkOIDC = async (oidcProvider: Config["oidc_providers"][0]) => {
 									<Icon name="ic:round-plus" />
 								</Button>
 								<Button
-									theme="gray"
-									:disabled="(user?.oauthAccounts ?? []).filter(
-										a => a.provider === provider.id
-									).length > 0
-									"
 									v-for="provider of oidc"
 									:key="provider.id"
-									@click="linkOIDC(provider)"
-									class="w-full disabled:opacity-50 justify-between">
+									theme="gray"
+									:disabled="
+										(user?.oauthAccounts ?? []).filter(
+											a => a.provider === provider.id
+										).length > 0
+									"
+									class="w-full disabled:opacity-50 justify-between"
+									@click="linkOIDC(provider)">
 									<span
-										><img :src="provider.icon" class="mr-2 w-4 h-4 inline mb-1">
+										><img
+											:src="provider.icon"
+											class="mr-2 w-4 h-4 inline mb-1" />
 										{{
 											(user?.oauthAccounts ?? []).filter(
 												a => a.provider === provider.id
 											).length > 0
-											? "Linked!"
-											: provider.name
+												? "Linked!"
+												: provider.name
 										}}</span
 									>
 									<Icon name="ic:round-plus" />

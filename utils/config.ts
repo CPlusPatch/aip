@@ -1,6 +1,6 @@
+import { readFileSync } from "fs";
 import { parse } from "smol-toml";
 import { Config } from "types/config";
-import { readFileSync } from "fs";
 
 export const getConfig = () => {
 	let config: Config = {
@@ -9,8 +9,7 @@ export const getConfig = () => {
 
 	try {
 		config = parse(
-			readFileSync("./config/config.toml")
-				.toString("utf-8")
+			readFileSync("./config/config.toml").toString("utf-8")
 		) as unknown as Config;
 	} catch (err) {
 		console.error(err);

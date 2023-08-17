@@ -7,9 +7,9 @@ const user = (await useFetch(`/api/user/get`)).data.value as User;
 if (!user)
 	navigateTo(
 		"/auth/login?" +
-		new URLSearchParams({
-			next: "/",
-		})
+			new URLSearchParams({
+				next: "/",
+			})
 	);
 
 const chat = await useFetch("/api/chats/create", {

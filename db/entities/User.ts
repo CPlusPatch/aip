@@ -11,6 +11,11 @@ export enum Role {
 	GUEST = "guest",
 }
 
+export enum Subscriptions {
+	NONE = "none",
+	PREMIUM = "premium",
+}
+
 @Entity()
 export class User {
 	@PrimaryGeneratedColumn()
@@ -46,10 +51,20 @@ export class User {
 	@UpdateDateColumn()
 	edited_at?: Date;
 
+	@Column("varchar", {
+		default: Subscriptions.NONE,
+	})
+	subscription: Subscriptions;
+
 	@Column("int", {
 		default: 0,
 	})
 	credits: number;
+
+	@Column("varchar", {
+		nullable: true,
+	})
+	stripe_id?: string;
 
 	@Column("jsonb", { nullable: true })
 	oauthAccounts?: { provider: string; id: string }[];
