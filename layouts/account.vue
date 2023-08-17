@@ -45,17 +45,19 @@ const navigation = [
 						<li>
 							<ul role="list" class="space-y-2">
 								<li v-for="item in navigation" :key="item.name">
-									<Button
-										theme="gray"
-										:class="[
-											'group flex gap-x-3 w-full !justify-start',
-										]">
-										<Icon
-											:name="item.icon"
-											class="h-5 w-5 shrink-0"
-											aria-hidden="true" />
-										{{ item.name }}
-									</Button>
+									<NuxtLink class="w-full" :to="item.href">
+										<Button
+											theme="gray"
+											:class="[
+												'group flex gap-x-3 w-full !justify-start',
+											]">
+											<Icon
+												:name="item.icon"
+												class="h-5 w-5 shrink-0"
+												aria-hidden="true" />
+											{{ item.name }}
+										</Button>
+									</NuxtLink>
 								</li>
 							</ul>
 						</li>
