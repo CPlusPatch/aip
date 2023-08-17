@@ -92,6 +92,8 @@ export default defineEventHandler(async event => {
 		case "invoice.payment_succeeded": {
 			const invoiceObject = stripeEvent.data.object as Stripe.Invoice;
 
+			console.log(stripeEvent);
+
 			const checkoutSessions = await stripe.checkout.sessions.list({
 				payment_intent: invoiceObject.payment_intent as string,
 			});
