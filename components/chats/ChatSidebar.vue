@@ -151,34 +151,29 @@ const cleanChats = () => {
 							</div>
 						</div>
 						<div class="pt-2 empty:hidden">
-							<Button
-								theme="gray"
-								name=""
-								class="flex flex-row gap-x-2 py-2 text-left w-full justify-between">
-								<div class="flex items-center">
-									<img
-										class="inline-block h-9 w-9 rounded"
-										:src="user?.avatar"
-										alt="" />
-									<div class="ml-3">
-										<p
-											class="text-sm font-medium text-gray-200 group-hover:text-gray-50">
-											{{ user?.display_name }}
-										</p>
-										<p
-											class="text-xs font-medium text-gray-400 group-hover:text-gray-200">
-											View profile
-										</p>
+							<NuxtLink to="/settings/user">
+								<Button
+									theme="gray"
+									name=""
+									class="flex flex-row gap-x-2 py-2 text-left w-full justify-between">
+									<div class="flex items-center">
+										<img
+											class="inline-block h-9 w-9 rounded"
+											:src="user?.avatar"
+											alt="" />
+										<div class="ml-3">
+											<p
+												class="text-sm font-medium text-gray-200 group-hover:text-gray-50">
+												{{ user?.display_name }}
+											</p>
+											<p
+												class="text-xs font-medium text-gray-400 group-hover:text-gray-200">
+												View profile
+											</p>
+										</div>
 									</div>
-								</div>
-								<Icon
-									name="ic:round-keyboard-arrow-down"
-									:class="[
-										'-mr-1 duration-200 h-5 w-5 text-gray-400',
-										false ? 'rotate-0' : 'rotate-180',
-									]"
-									aria-hidden="true" />
-							</Button>
+								</Button>
+							</NuxtLink>
 						</div>
 					</nav>
 				</div>

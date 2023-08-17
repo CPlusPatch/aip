@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 import { getUserByToken } from "~/utils/tokens";
 import { getConfig } from "~/utils/config";
-import { AppDataSource } from "~/db/data-source";
 import { Transaction } from "~/db/entities/Transaction";
+import { Invoice } from "~/db/entities/Invoice";
 
 export default defineEventHandler(async event => {
 	// Make sure user is identified
@@ -20,11 +20,22 @@ export default defineEventHandler(async event => {
 	const config = getConfig();
 
 	const body = await readBody<{
-		products: {
-			stripe_id: string;
-			quantity: number;
-		}[];
+		product: string;
 	}>(event);
+
+	if (body.product !== "PREMIUM") {
+		throw createError({
+			statusCode: 400,
+			message: "Invalid product",
+		});
+	}
+
+	const products = [
+		{
+			stripe_id: config.stripe.products.premium,
+			quantity: 1,
+		},
+	];
 
 	const stripe = new Stripe(config.stripe.secret_api_key, {
 		// @ts-ignore
@@ -34,15 +45,17 @@ export default defineEventHandler(async event => {
 
 	const url = new URL(`http://${event.node.req.headers.host}`);
 
+	const invoice = new Invoice();
+
 	const session = await stripe.checkout.sessions.create({
-		line_items: body.products.map(product => ({
+		line_items: products.map(product => ({
 			price: product.stripe_id,
 			quantity: product.quantity,
 		})),
 		mode: "subscription",
 		customer: user.stripe_id,
-		success_url: `${url.origin}/billing/success`,
-		cancel_url: `${url.origin}/billing/failure`,
+		success_url: `${url.origin}/settings/invoice`,
+		cancel_url: `${url.origin}/settings/invoice`,
 	});
 
 	const transaction = new Transaction();
@@ -51,7 +64,13 @@ export default defineEventHandler(async event => {
 	transaction.stripe_id = session.id;
 	transaction.user = user;
 
-	await AppDataSource.getRepository(Transaction).save(transaction);
+	invoice.stripe_id = session.invoice as string;
+	invoice.user = user;
+
+	await transaction.save();
+
+	invoice.transaction = transaction;
+	await invoice.save();
 
 	return {
 		url: session.url,

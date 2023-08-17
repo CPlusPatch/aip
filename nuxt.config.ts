@@ -48,7 +48,7 @@ export default defineNuxtConfig({
 				},
 			},
 		},
-		plugins: ["./clear-lockfile.server.ts"]
+		plugins: ["./clear-lockfile.server.ts", "./init-datasource.server.ts"],
 	},
 	runtimeConfig: {
 		public: {

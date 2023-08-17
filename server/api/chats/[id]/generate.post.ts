@@ -1,13 +1,35 @@
 import { readFileSync, writeFileSync } from "fs";
 import { nanoid } from "nanoid";
+// eslint-disable-next-line import/no-named-as-default
 import OpenAI from "openai";
-import { AppDataSource } from "~/db/data-source";
+import { Subscriptions } from "~/db/entities/User";
 import { Chat } from "~/db/entities/Chat";
 import { getConfig } from "~/utils/config";
 import { getUserByToken } from "~/utils/tokens";
 
 export default defineEventHandler(async event => {
 	const config = getConfig();
+
+	const user = await getUserByToken(
+		event.node.req.headers.authorization?.split(" ")[1] ?? ""
+	);
+
+	// Throw an error if the sender is not authorized.
+	if (!user) {
+		throw createError({
+			statusCode: 401,
+		});
+	}
+
+	if (
+		![Subscriptions.PREMIUM].includes(user.subscription) &&
+		user.credits <= 0
+	) {
+		throw createError({
+			statusCode: 402,
+			message: "Insufficient credits",
+		});
+	}
 
 	// Fetch file from /tmp/aip-workers.json and read contents
 	let workers: {
@@ -31,17 +53,6 @@ export default defineEventHandler(async event => {
 	);
 
 	try {
-		const user = await getUserByToken(
-			event.node.req.headers.authorization?.split(" ")[1] ?? ""
-		);
-
-		// Throw an error if the sender is not authorized.
-		if (!user) {
-			throw createError({
-				statusCode: 401,
-			});
-		}
-
 		event.node.res.writeHead(200, { "Content-Type": "text/plain" });
 
 		const body = await readBody<{
@@ -56,7 +67,7 @@ export default defineEventHandler(async event => {
 		// Get relevant chat from database and update messages
 		const chatId = event.context.params?.id ?? "";
 
-		const chat = await AppDataSource.getRepository(Chat).findOne({
+		const chat = await Chat.findOne({
 			where: {
 				id: Number(chatId),
 				user: {
@@ -77,7 +88,7 @@ export default defineEventHandler(async event => {
 
 		chat.messages = body.messages;
 
-		await AppDataSource.getRepository(Chat).save(chat);
+		await chat.save();
 
 		// Set worker as occupied and save changes to disk
 		workers[nextAvailableWorkerIndex].occupied = true;
@@ -103,8 +114,22 @@ export default defineEventHandler(async event => {
 		});
 
 		for await (const part of stream) {
-			event.node.res.write(part.choices[0]?.delta?.content || "");
-			newMessage += part.choices[0]?.delta?.content || "";
+			const chunk = part.choices[0]?.delta?.content || "";
+			event.node.res.write(chunk);
+			newMessage += chunk;
+			if ([Subscriptions.PREMIUM].includes(user.subscription)) {
+				// Do nothing
+			} else {
+				user.credits -= chunk.length;
+			}
+
+			if (user.credits < 0) {
+				user.credits = 0;
+				throw createError({
+					statusCode: 402,
+					message: "Insufficient credits",
+				});
+			}
 		}
 
 		event.node.res.end();
@@ -118,12 +143,14 @@ export default defineEventHandler(async event => {
 			},
 		];
 
-		await AppDataSource.getRepository(Chat).save(chat);
+		await chat.save();
 	} finally {
 		// Get new changes
 		workers = JSON.parse(
 			await readFileSync("/tmp/aip-workers.json", "utf-8")
 		);
+
+		await user.save();
 
 		// Set worker as unoccupied and save changes to disk
 		workers[nextAvailableWorkerIndex].occupied = false;

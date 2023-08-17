@@ -1,8 +1,8 @@
+import { Invoice } from "~/db/entities/Invoice";
 import { getUserByToken } from "~/utils/tokens";
-import { Chat } from "~/db/entities/Chat";
 
-// Returns all chats belonging to a user
 export default defineEventHandler(async event => {
+	// Make sure user is identified
 	const user = await getUserByToken(
 		event.node.req.headers.authorization?.split(" ")[1] ?? ""
 	);
@@ -14,25 +14,24 @@ export default defineEventHandler(async event => {
 		});
 	}
 
-	// Get all chats where chat.user is the user
-	const chat = await Chat.findOne({
+	const invoiceId = event.context.params?.id ?? "";
+
+	const invoice = await Invoice.findOne({
 		where: {
-			user: {
-				id: user.id,
-			},
-			id: Number(event.context.params?.id) ?? 0,
+			id: Number.parseInt(invoiceId),
 		},
 		relations: {
 			user: true,
 		},
 	});
 
-	if (chat) {
-		chat.user.password = "";
-		return chat;
+	if (invoice) {
+		invoice.user.password = "";
+		return invoice;
 	} else {
 		throw createError({
-			statusCode: 500,
+			statusCode: 404,
+			message: "Invoice not found",
 		});
 	}
 });

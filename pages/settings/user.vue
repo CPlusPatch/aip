@@ -127,7 +127,7 @@ const linkOIDC = async (oidcProvider: Config["oidc_providers"][0]) => {
 </script>
 
 <template>
-	<main class="bg-dark-700 grow h-screen overflow-y-scroll no-scrollbar">
+	<main class="bg-dark-400 grow h-screen overflow-y-scroll no-scrollbar">
 		<!-- Settings forms -->
 		<div
 			class="divide-y divide-white/5 flex flex-col items-center children:w-full">

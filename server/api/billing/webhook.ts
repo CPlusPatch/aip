@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 import { Transaction } from "~/db/entities/Transaction";
-import { AppDataSource } from "~/db/data-source";
-import { Subscriptions, User } from "~/db/entities/User";
+import { Subscriptions } from "~/db/entities/User";
 import { getConfig } from "~/utils/config";
+import { Invoice } from "~/db/entities/Invoice";
 
 export default defineEventHandler(async event => {
 	const sig = event.node.req.headers["stripe-signature"] as string;
@@ -61,7 +61,7 @@ export default defineEventHandler(async event => {
 			lineItems?.data.forEach(async lineItem => {
 				if (lineItem.price?.id === config.stripe.products.premium) {
 					const user = (
-						await AppDataSource.getRepository(Transaction).findOne({
+						await Transaction.findOne({
 							relations: {
 								user: true,
 							},
@@ -76,7 +76,7 @@ export default defineEventHandler(async event => {
 						user.subscription = Subscriptions.PREMIUM;
 						user.stripe_id =
 							sessionWithLineItems.customer as string;
-						await AppDataSource.getRepository(User).save(user);
+						await user.save();
 					} else {
 						throw createError({
 							statusCode: 404,
@@ -85,6 +85,41 @@ export default defineEventHandler(async event => {
 					}
 				}
 			});
+
+			break;
+		}
+
+		case "invoice.payment_succeeded": {
+			const invoiceObject = stripeEvent.data.object as Stripe.Invoice;
+
+			const checkoutSessions = await stripe.checkout.sessions.list({
+				payment_intent: invoiceObject.payment_intent as string,
+			});
+
+			const checkoutSession = checkoutSessions.data[0];
+
+			const invoice = await Invoice.findOne({
+				where: {
+					transaction: {
+						stripe_id: checkoutSession.id,
+					},
+				},
+				relations: {
+					user: true,
+					transaction: true,
+				},
+			});
+
+			if (!invoice) {
+				throw createError({
+					statusCode: 404,
+					message: "Invoice not found",
+				});
+			}
+
+			invoice.data = invoiceObject;
+			invoice.stripe_id = invoiceObject.id;
+			await invoice.save();
 
 			break;
 		}

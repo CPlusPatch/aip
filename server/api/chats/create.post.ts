@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid";
-import { AppDataSource } from "~/db/data-source";
 import { Chat } from "~/db/entities/Chat";
 import { getUserByToken } from "~/utils/tokens";
 
@@ -16,10 +15,6 @@ export default defineEventHandler(async event => {
 		});
 	}
 
-	if (!AppDataSource.isInitialized) {
-		await AppDataSource.initialize();
-	}
-
 	const chat = new Chat();
 
 	chat.title = "New chat";
@@ -34,7 +29,7 @@ export default defineEventHandler(async event => {
 	chat.user = user;
 
 	// Save the new chat.
-	const newChat = await AppDataSource.getRepository(Chat).save(chat);
+	const newChat = await chat.save();
 
 	if (newChat) {
 		return newChat;

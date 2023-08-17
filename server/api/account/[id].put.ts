@@ -1,6 +1,5 @@
 import DOMPurify from "isomorphic-dompurify";
 import { User } from "~/db/entities/User";
-import { AppDataSource } from "~~/db/data-source";
 import { getUserByToken } from "~/utils/tokens";
 
 export default defineEventHandler(async event => {
@@ -19,11 +18,7 @@ export default defineEventHandler(async event => {
 
 	const body = (await readBody(event)) as Partial<User>;
 
-	if (!AppDataSource.isInitialized) {
-		await AppDataSource.initialize();
-	}
-
-	const dbUser = await AppDataSource.getRepository(User).findOneBy({
+	const dbUser = await User.findOneBy({
 		id: Number.parseInt(id),
 	});
 
@@ -33,7 +28,7 @@ export default defineEventHandler(async event => {
 		dbUser.display_name = DOMPurify.sanitize(body.display_name);
 	if (body.avatar) dbUser.avatar = DOMPurify.sanitize(body.avatar);
 
-	await AppDataSource.getRepository(User).save(dbUser);
+	await dbUser.save();
 
 	if (dbUser) {
 		return {

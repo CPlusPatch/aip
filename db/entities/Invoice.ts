@@ -8,32 +8,32 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from "typeorm";
+import Stripe from "stripe";
 import { User } from "./User";
+import { Transaction } from "./Transaction";
 
-@Entity({
-	name: "personalities",
-})
-export class Personality extends BaseEntity {
+@Entity()
+export class Invoice extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
-
-	@Column("varchar")
-	name: string;
-
-	@Column("varchar")
-	description: string;
 
 	@Column("varchar", {
 		nullable: true,
 	})
-	avatar: string;
+	stripe_id?: string;
 
-	@Column("varchar")
-	prompt: string;
+	@Column("jsonb", {
+		nullable: true,
+	})
+	data: Stripe.Invoice;
 
 	@ManyToOne(() => User)
 	@JoinColumn()
-	creator: User;
+	user: User;
+
+	@ManyToOne(() => Transaction)
+	@JoinColumn()
+	transaction: Transaction;
 
 	@CreateDateColumn()
 	created_at?: Date;

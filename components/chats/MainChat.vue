@@ -12,6 +12,11 @@ const token = useCookie("token");
 const isLoading = ref(false);
 const errorMessage = ref("");
 const message = ref("");
+const credits = ref(
+	props.user.subscription === Subscriptions.PREMIUM
+		? Infinity
+		: props.user.credits
+);
 // const bottomOfChatRef = ref<HTMLElement | null>(null);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -88,6 +93,10 @@ const sendMessage = async (e: Event) => {
 				if (isLoading.value) isLoading.value = false;
 				const decoder = new TextDecoder();
 				const chunk = decoder.decode(result.value, { stream: true });
+				credits.value -= chunk.length;
+				if (credits.value < 0) {
+					credits.value = 0;
+				}
 				messages.value[lastMessageFromSystemIndex].content += chunk;
 				// If the message begins with a newline, remove it:
 				if (
@@ -140,12 +149,7 @@ const buyPremium = () => {
 	useFetch(`/api/billing/order`, {
 		method: "POST",
 		body: JSON.stringify({
-			products: [
-				{
-					stripe_id: "price_1Nfsw9JngIiJxML9lBFyuVlD",
-					quantity: 1,
-				},
-			],
+			product: "PREMIUM",
 		}),
 		headers: {
 			"Content-Type": "application/json",
@@ -200,7 +204,7 @@ const buyPremium = () => {
 										{{
 											user.subscription ===
 											Subscriptions.NONE
-												? user.credits ?? 0
+												? credits ?? 0
 												: "Infinity"
 										}}
 									</Button>
@@ -220,6 +224,16 @@ const buyPremium = () => {
 							<Spinner class="fill-orange-500 text-dark-50" />
 							Generating...
 						</div>
+						<div
+							v-if="credits <= 0"
+							class="mx-auto py-5 text-gray-100 text-center">
+							<Icon name="fluent-emoji:warning" class="mr-1" />
+							You are out of credits!
+							<button class="underline" @click="buyPremium">
+								Click here
+							</button>
+							to purchase AIP Supporter for unlimited access
+						</div>
 						<div class="h-32 md:h-48 flex-shrink-0"></div>
 					</div>
 				</div>
@@ -238,8 +252,9 @@ const buyPremium = () => {
 								v-model="message"
 								tabindex="0"
 								rows="1"
+								:disabled="credits <= 0"
 								placeholder="Send a message"
-								class="m-0 grow resize-none ml-2 border-0 bg-transparent p-0 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pr-12 pl-3 md:pl-0"
+								class="m-0 grow disabled:cursor-not-allowed resize-none ml-2 border-0 bg-transparent p-0 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pr-12 pl-3 md:pl-0"
 								style="
 									max-height: 200px;
 									height: 24px;
@@ -248,7 +263,7 @@ const buyPremium = () => {
 								@keydown="handleKeypress"></textarea
 							><button
 								class="p-1 rounded-md dark:hover:bg-gray-900 dark:disabled:hover:bg-transparent disabled:text-gray-400 enabled:bg-brand-purple text-white transition-colors disabled:opacity-40"
-								:disabled="message.length === 0"
+								:disabled="message.length === 0 || credits <= 0"
 								@click="sendMessage">
 								<Icon
 									name="tabler:send"

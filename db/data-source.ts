@@ -5,6 +5,7 @@ import { Token } from "./entities/Token";
 import { Chat } from "./entities/Chat";
 import { Personality } from "./entities/Personality";
 import { Transaction } from "./entities/Transaction";
+import { Invoice } from "./entities/Invoice";
 
 const AppDataSource = new DataSource({
 	type: "postgres",
@@ -15,7 +16,7 @@ const AppDataSource = new DataSource({
 	// database: "./web.sqlite",
 	database: "aip",
 	synchronize: true,
-	entities: [User, Token, Chat, Personality, Transaction],
+	entities: [User, Token, Chat, Personality, Transaction, Invoice],
 });
 
 export { AppDataSource };

@@ -1,8 +1,5 @@
 import { nanoid } from "nanoid";
-import { parse } from "smol-toml";
-import { Config } from "types/config";
 import { arrayBufferToWebP } from "webp-converter-browser";
-import { Setting } from "~/db/entities/Setting";
 
 export interface AnyObject {
 	[key: string]: any;
@@ -28,11 +25,11 @@ export function generateIds(obj: AnyObject): AnyObject {
 	return newObj;
 }
 
-export const getSettings = async () =>
-	(await useFetch<Setting>("/api/admin/settings")).data.value?.value ?? {};
-
-
-export const uploadFile = async (e: Event, token: string, setLoading: (loading: boolean) => void) => {
+export const uploadFile = (
+	e: Event,
+	token: string,
+	setLoading: (loading: boolean) => void
+) => {
 	return new Promise(async (resolve, reject) => {
 		const target = e.target as HTMLInputElement;
 
@@ -68,12 +65,12 @@ export const uploadFile = async (e: Event, token: string, setLoading: (loading: 
 			.then(async res => {
 				if (res.ok) {
 					setLoading(false);
-					resolve(await res.text())
+					resolve(await res.text());
 				}
 			})
 			.catch(err => {
 				setLoading(false);
-				reject(err)
+				reject(err);
 			});
 	});
 };

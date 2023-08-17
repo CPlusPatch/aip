@@ -1,24 +1,18 @@
 import {
+	BaseEntity,
 	Column,
+	CreateDateColumn,
 	Entity,
 	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from "typeorm";
+import Stripe from "stripe";
 import { User } from "./User";
 
-export enum Role {
-	ADMIN = "admin",
-	GUEST = "guest",
-}
-
-export enum Subscriptions {
-	NONE = "none",
-	PREMIUM = "premium",
-}
-
 @Entity()
-export class Transaction {
+export class Transaction extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -26,9 +20,15 @@ export class Transaction {
 	stripe_id: string;
 
 	@Column("jsonb")
-	data: any;
+	data: Stripe.Checkout.Session;
 
 	@ManyToOne(() => User)
 	@JoinColumn()
 	user: User;
+
+	@CreateDateColumn()
+	created_at?: Date;
+
+	@UpdateDateColumn()
+	edited_at?: Date;
 }

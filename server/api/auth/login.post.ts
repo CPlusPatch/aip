@@ -1,5 +1,4 @@
 import { randomBytes } from "crypto";
-import { AppDataSource } from "~/db/data-source";
 import { Token } from "~/db/entities/Token";
 import { User } from "~/db/entities/User";
 import { createPasswordHash } from "~/utils/passwords";
@@ -16,11 +15,7 @@ export default defineEventHandler(async event => {
 			statusMessage: "Missing fields: username and/or password",
 		});
 
-	if (!AppDataSource.isInitialized) {
-		await AppDataSource.initialize();
-	}
-
-	const user = await AppDataSource.getRepository(User).findOneBy({
+	const user = await User.findOneBy({
 		username: body.username,
 	});
 
@@ -47,7 +42,7 @@ export default defineEventHandler(async event => {
 			1000 /* sec */ * 60 /* min */ * 60 /* hour */ * 24 /* day */ * 7
 	);
 
-	await AppDataSource.getRepository(Token).save(token);
+	await token.save();
 
 	if (token) {
 		return {

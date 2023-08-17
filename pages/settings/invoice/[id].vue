@@ -1,29 +1,38 @@
 <script setup lang="ts">
-import { User } from "~/db/entities/User";
+import { Invoice } from "~/db/entities/Invoice";
 
-const user = (await useFetch(`/api/user/get`)).data.value as User;
+const token = useCookie("token");
+
+const invoiceId = useRoute().params.id ?? "";
+
+const invoice = (
+	await useFetch(`/api/billing/invoice/${invoiceId}`, {
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+	})
+).data.value as Invoice;
+
+const products = (
+	await useFetch(`/api/billing/invoice/${invoiceId}/products`, {
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+	})
+).data.value;
+
+console.log(products);
 
 definePageMeta({
 	layout: "account",
 });
-
-const invoice = {
-	subTotal: "$10.00",
-	tax: "$0.0",
-	total: "$10.00",
-	items: [
-		{
-			id: 1,
-			title: "AIP Supporter",
-			description: "AIP Supporter subscription",
-			price: "$10.00/month",
-		},
-	],
-};
 </script>
 
 <template>
-	<main class="bg-dark-400 max-h-screen overflow-scroll no-scrollbar grow">
+	<main
+		class="bg-dark-400 max-h-screen h-screen overflow-scroll no-scrollbar grow">
 		<header class="relative isolate pt-16">
 			<div
 				class="absolute inset-0 -z-10 overflow-hidden"
@@ -64,7 +73,9 @@ const invoice = {
 						<h1>
 							<div class="text-sm leading-6 text-gray-400">
 								Invoice
-								<span class="text-gray-200">#00011</span>
+								<span class="text-gray-200"
+									>#{{ invoice.data.number }}</span
+								>
 							</div>
 							<div
 								class="mt-1 text-base font-semibold leading-6 text-gray-50">
@@ -92,7 +103,12 @@ const invoice = {
 								</dt>
 								<dd
 									class="mt-1 text-base font-semibold leading-6 text-gray-50">
-									$10.00
+									{{
+										Intl.NumberFormat("de-DE", {
+											style: "currency",
+											currency: "EUR",
+										}).format(invoice.data.total / 100)
+									}}
 								</dd>
 							</div>
 							<div class="flex-none self-end px-6 pt-4">
@@ -113,7 +129,7 @@ const invoice = {
 								</dt>
 								<dd
 									class="text-sm font-medium leading-6 text-gray-50">
-									{{ user.display_name }}
+									{{ invoice.data.customer_name }}
 								</dd>
 							</div>
 							<div
@@ -126,9 +142,13 @@ const invoice = {
 										aria-hidden="true" />
 								</dt>
 								<dd class="text-sm leading-6 text-gray-400">
-									<time datetime="2023-01-31"
-										>January 31, 2023</time
-									>
+									<time datetime="2023-01-31">{{
+										Intl.DateTimeFormat("de-DE", {
+											year: "numeric",
+											month: "long",
+											day: "numeric",
+										}).format(invoice.data.due_date ?? 0)
+									}}</time>
 								</dd>
 							</div>
 							<div
@@ -147,7 +167,7 @@ const invoice = {
 						</dl>
 						<div class="mt-6 border-t border-gray-50/5 px-6 py-6">
 							<a
-								href="#"
+								:href="invoice.data.invoice_pdf ?? '#'"
 								class="text-sm font-semibold leading-6 text-gray-50"
 								>Download receipt
 								<span aria-hidden="true">&rarr;</span></a
@@ -168,18 +188,26 @@ const invoice = {
 							<dt class="inline text-gray-400">Issued on</dt>
 							{{ " " }}
 							<dd class="inline text-gray-200">
-								<time datetime="2023-23-01"
-									>January 23, 2023</time
-								>
+								<time datetime="2023-23-01">{{
+									Intl.DateTimeFormat("de-DE", {
+										year: "numeric",
+										month: "long",
+										day: "numeric",
+									}).format(new Date(invoice.created_at ?? 0))
+								}}</time>
 							</dd>
 						</div>
 						<div class="mt-2 sm:mt-0 sm:pl-4">
 							<dt class="inline text-gray-400">Due on</dt>
 							{{ " " }}
 							<dd class="inline text-gray-200">
-								<time datetime="2023-31-01"
-									>January 31, 2023</time
-								>
+								<time datetime="2023-31-01">{{
+									Intl.DateTimeFormat("de-DE", {
+										year: "numeric",
+										month: "long",
+										day: "numeric",
+									}).format(invoice.data.due_date ?? 0)
+								}}</time>
 							</dd>
 						</div>
 						<div
@@ -187,18 +215,30 @@ const invoice = {
 							<dt class="font-semibold text-gray-50">From</dt>
 							<dd class="mt-2 text-gray-400">
 								<span class="font-medium text-gray-50"
-									>Acme, Inc.</span
-								><br />7363 Cynthia Pass<br />Toronto, ON N3Y
-								4H8
+									>Uden UG (haftungsbeschränkt)</span
+								><br />Wirde Landen 8 <br />Norden,
+								Lower-Saxony, Germany
 							</dd>
 						</div>
 						<div
 							class="mt-8 sm:mt-6 sm:border-t sm:border-gray-50/5 sm:pl-4 sm:pt-6">
 							<dt class="font-semibold text-gray-50">To</dt>
 							<dd class="mt-2 text-gray-400">
-								<span class="font-medium text-gray-50"
-									>Tuple, Inc</span
-								><br />886 Walter Street<br />New York, NY 12345
+								<span class="font-medium text-gray-50">{{
+									invoice.data.account_name
+								}}</span
+								><br />{{
+									invoice.data.customer_address?.line1 ??
+									"Unknown Address"
+								}}<br />{{
+									invoice.data.customer_address?.city ??
+									"Unknown City"
+								}},
+								{{
+									invoice.data.customer_address?.state ??
+									"Unknown State"
+								}},
+								{{ invoice.data.customer_address?.country }}
 							</dd>
 						</div>
 					</dl>
@@ -225,7 +265,7 @@ const invoice = {
 						</thead>
 						<tbody>
 							<tr
-								v-for="item in invoice.items"
+								v-for="item in products"
 								:key="item.id"
 								class="border-b border-gray-800">
 								<td
@@ -233,7 +273,7 @@ const invoice = {
 									class="max-w-0 px-0 py-5 align-top">
 									<div
 										class="truncate font-medium text-gray-50">
-										{{ item.title }}
+										{{ item.description }}
 									</div>
 									<div class="truncate text-gray-400">
 										{{ item.description }}
@@ -241,7 +281,14 @@ const invoice = {
 								</td>
 								<td
 									class="py-5 pl-8 pr-0 text-right align-top tabular-nums text-gray-200">
-									{{ item.price }}
+									{{
+										Intl.NumberFormat("de-DE", {
+											style: "currency",
+											currency: "EUR",
+										}).format(
+											(item.price?.unit_amount ?? 0) / 100
+										)
+									}}
 								</td>
 							</tr>
 						</tbody>
@@ -255,7 +302,14 @@ const invoice = {
 								</th>
 								<td
 									class="pb-0 pl-8 pr-0 pt-6 text-right tabular-nums text-gray-50">
-									{{ invoice.subTotal }}
+									{{
+										Intl.NumberFormat("de-DE", {
+											style: "currency",
+											currency: "EUR",
+										}).format(
+											(invoice.data.subtotal ?? 0) / 100
+										)
+									}}
 								</td>
 							</tr>
 							<tr>
@@ -267,7 +321,12 @@ const invoice = {
 								</th>
 								<td
 									class="pb-0 pl-8 pr-0 pt-4 text-right tabular-nums text-gray-200">
-									{{ invoice.tax }}
+									{{
+										Intl.NumberFormat("de-DE", {
+											style: "currency",
+											currency: "EUR",
+										}).format((invoice.data.tax ?? 0) / 100)
+									}}
 								</td>
 							</tr>
 							<tr>
@@ -279,7 +338,14 @@ const invoice = {
 								</th>
 								<td
 									class="pb-0 pl-8 pr-0 pt-4 text-right font-semibold tabular-nums text-gray-50">
-									{{ invoice.total }}
+									{{
+										Intl.NumberFormat("de-DE", {
+											style: "currency",
+											currency: "EUR",
+										}).format(
+											(invoice.data.total ?? 0) / 100
+										)
+									}}
 								</td>
 							</tr>
 						</tfoot>

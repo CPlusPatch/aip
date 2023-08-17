@@ -1,4 +1,3 @@
-import { AppDataSource } from "~/db/data-source";
 import { getUserByToken } from "~/utils/tokens";
 import { Chat } from "~/db/entities/Chat";
 
@@ -14,13 +13,8 @@ export default defineEventHandler(async event => {
 			statusCode: 401,
 		});
 	}
-
-	if (!AppDataSource.isInitialized) {
-		await AppDataSource.initialize();
-	}
-
 	// Get all chats where chat.user is the user
-	const chat = await AppDataSource.getRepository(Chat).findOne({
+	const chat = await Chat.findOne({
 		where: {
 			user: {
 				id: user.id,
@@ -32,8 +26,7 @@ export default defineEventHandler(async event => {
 		},
 	});
 
-	
-	if (chat && await AppDataSource.getRepository(Chat).remove([chat])) {
+	if (chat && (await chat.remove())) {
 		return true;
 	} else {
 		throw createError({

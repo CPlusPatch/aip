@@ -1,6 +1,5 @@
 import { randomBytes } from "crypto";
 import { User as OidcUser } from "oidc-client-ts";
-import { AppDataSource } from "~/db/data-source";
 import { Token } from "~/db/entities/Token";
 import { User } from "~/db/entities/User";
 import { validateToken } from "~/utils/tokens";
@@ -17,10 +16,6 @@ export default defineEventHandler(async event => {
 	const provider = oidc.find(o => o.id === body.provider);
 	if (!provider) throw createError("Invalid OIDC provider!");
 
-	if (!AppDataSource.isInitialized) {
-		await AppDataSource.initialize();
-	}
-
 	let userId: string;
 
 	try {
@@ -32,8 +27,7 @@ export default defineEventHandler(async event => {
 		});
 	}
 
-	const user = await AppDataSource.getRepository(User)
-		.createQueryBuilder("user")
+	const user = await User.createQueryBuilder("user")
 		.where(
 			`EXISTS(
 					SELECT *
@@ -61,7 +55,7 @@ export default defineEventHandler(async event => {
 			1000 /* sec */ * 60 /* min */ * 60 /* hour */ * 24 /* day */ * 7
 	);
 
-	await AppDataSource.getRepository(Token).save(token);
+	await token.save();
 
 	if (token) {
 		return {
