@@ -207,12 +207,13 @@ const invoice = {
 						<colgroup>
 							<col class="w-full" />
 							<col />
-							<col />
-							<col />
 						</colgroup>
 						<thead class="border-b border-gray-700 text-gray-50">
 							<tr>
-								<th scope="col" class="px-0 py-3 font-semibold">
+								<th
+									scope="col"
+									colspan="3"
+									class="px-0 py-3 font-semibold">
 									Projects
 								</th>
 								<th
@@ -227,7 +228,9 @@ const invoice = {
 								v-for="item in invoice.items"
 								:key="item.id"
 								class="border-b border-gray-800">
-								<td class="max-w-0 px-0 py-5 align-top">
+								<td
+									colspan="3"
+									class="max-w-0 px-0 py-5 align-top">
 									<div
 										class="truncate font-medium text-gray-50">
 										{{ item.title }}
@@ -247,7 +250,7 @@ const invoice = {
 								<th
 									scope="row"
 									colspan="3"
-									class="hidden px-0 pb-0 pt-6 text-right font-normal text-gray-200 sm:table-cell">
+									class="px-0 pb-0 pt-6 text-right font-normal text-gray-200 table-cell">
 									Subtotal
 								</th>
 								<td
@@ -259,7 +262,7 @@ const invoice = {
 								<th
 									scope="row"
 									colspan="3"
-									class="hidden pt-4 text-right font-normal text-gray-200 sm:table-cell">
+									class="pt-4 text-right font-normal text-gray-200 table-cell">
 									Tax
 								</th>
 								<td
@@ -271,7 +274,7 @@ const invoice = {
 								<th
 									scope="row"
 									colspan="3"
-									class="hidden pt-4 text-right font-semibold text-gray-50 sm:table-cell">
+									class="pt-4 text-right font-semibold text-gray-50 table-cell">
 									Total
 								</th>
 								<td

@@ -114,9 +114,9 @@ const oidcSignIn = async (oidcProvider: Config["oidc_providers"][0]) => {
 	});
 
 	if (response.ok) {
-		token.value = await response.text();
+		token.value = (await response.json()).token;
 
-		useRouter().push("/");
+		window.location.href = "/";
 	} else {
 		error.value = await response.json();
 	}
@@ -127,11 +127,11 @@ const oidcSignIn = async (oidcProvider: Config["oidc_providers"][0]) => {
 
 <template>
 	<div
-		class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+		class="flex min-h-full flex-1 flex-col dark justify-center px-6 py-12 lg:px-8 bg-dark-600">
 		<div class="sm:mx-auto sm:w-full sm:max-w-sm">
 			<LogosSmallLogo class="!w-10 !h-10 mx-auto" />
 			<h2
-				class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+				class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-50">
 				Sign in to your account
 			</h2>
 		</div>
@@ -185,7 +185,7 @@ const oidcSignIn = async (oidcProvider: Config["oidc_providers"][0]) => {
 							placeholder="Your password"
 							required
 							:loading="loading"
-							class="block w-full rounded-md !ring-orange-500 !border-gray-300" />
+							class="block w-full rounded-md" />
 					</div>
 				</div>
 
@@ -209,11 +209,11 @@ const oidcSignIn = async (oidcProvider: Config["oidc_providers"][0]) => {
 				</div>
 				<div
 					class="relative flex flex-row justify-center items-center text-sm">
-					<div class="h-0.5 bg-gray-200 w-1/4 rounded"></div>
-					<span class="px-2 text-gray-500 w-1/2 text-center">
+					<div class="h-0.5 bg-gray-800 w-1/4 rounded"></div>
+					<span class="px-2 text-gray-400 w-1/2 text-center">
 						Or continue with
 					</span>
-					<div class="h-0.5 bg-gray-200 w-1/4 rounded"></div>
+					<div class="h-0.5 bg-gray-800 w-1/4 rounded"></div>
 				</div>
 				<div class="grid grid-cols-2 w-full gap-2">
 					<Button

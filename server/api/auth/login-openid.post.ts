@@ -1,8 +1,8 @@
 import { randomBytes } from "crypto";
+import { User as OidcUser } from "oidc-client-ts";
 import { AppDataSource } from "~/db/data-source";
 import { Token } from "~/db/entities/Token";
 import { User } from "~/db/entities/User";
-import { User as OidcUser } from "oidc-client-ts";
 import { validateToken } from "~/utils/tokens";
 import { getConfig } from "~/utils/config";
 
@@ -32,7 +32,6 @@ export default defineEventHandler(async event => {
 		});
 	}
 
-
 	const user = await AppDataSource.getRepository(User)
 		.createQueryBuilder("user")
 		.where(
@@ -49,20 +48,17 @@ export default defineEventHandler(async event => {
 	if (!user)
 		throw createError({
 			statusCode: 401,
-			statusMessage: "You do not have an account, please register for one.",
+			statusMessage:
+				"You do not have an account, please register for one.",
 		});
-	
+
 	const token = new Token();
 
 	token.user = user;
 	token.token = randomBytes(128).toString("base64");
 	token.expireDate = new Date(
 		Date.now() +
-			1000 /* sec */ *
-				60 /* min */ *
-				60 /* hour */ *
-				24 /* day */ *
-				7
+			1000 /* sec */ * 60 /* min */ * 60 /* hour */ * 24 /* day */ * 7
 	);
 
 	await AppDataSource.getRepository(Token).save(token);

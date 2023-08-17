@@ -4,7 +4,7 @@ import { User } from "~/db/entities/User";
 
 defineProps<{
 	user: User;
-}>()
+}>();
 
 const token = useCookie("token");
 
@@ -27,24 +27,51 @@ const deleteChat = (e: Event, id: number) => {
 				"Content-Type": "application/json",
 				Authorization: `Bearer ${token.value}`,
 			},
-		})
-			.then(res => {
-				if (res.ok) {
-					chatsList.value = chatsList.value.filter((c) => c.id !== id);
+		}).then(res => {
+			if (res.ok) {
+				chatsList.value = chatsList.value.filter(c => c.id !== id);
 
-					// If on the deleted chat URL, navigate to the latest chat
-					if (window.location.pathname === `/chats/${id}`) {
-						const latestChat = chatsList.value[0];
-						if (latestChat) {
-							useRouter().push(`/chats/${latestChat.id}`);
-						} else {
-							useRouter().push("/chats");
-						}
+				// If on the deleted chat URL, navigate to the latest chat
+				if (window.location.pathname === `/chats/${id}`) {
+					const latestChat = chatsList.value[0];
+					if (latestChat) {
+						useRouter().push(`/chats/${latestChat.id}`);
+					} else {
+						useRouter().push("/chats");
 					}
 				}
-			});
+			}
+		});
 	}
-}
+};
+
+const cleanChats = () => {
+	fetch(`/api/chats/clean`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+	}).then(async res => {
+		if (res.ok) {
+			chatsList.value = await res.json();
+
+			// If current chat has been cleaned, navigate to the latest chat
+			if (
+				chatsList.value.filter(
+					c => c.id === Number(window.location.pathname.split("/")[2])
+				).length === 0
+			) {
+				const latestChat = chatsList.value[0];
+				if (latestChat) {
+					useRouter().push(`/chats/${latestChat.id}`);
+				} else {
+					useRouter().push("/");
+				}
+			}
+		}
+	});
+};
 </script>
 
 <template>
@@ -73,15 +100,23 @@ const deleteChat = (e: Event, id: number) => {
 								<div>
 									<span>
 										<div class="relative">
-											<div class="sticky top-0 z-[16]">
+											<div
+												class="sticky top-0 z-[16] flex flex-row justify-between items-center">
 												<h3
 													class="h-9 pb-2 pt-3 px-1 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all">
 													Today
 												</h3>
+												<Icon
+													title="Clean empty chats"
+													name="tabler:trash"
+													class="w-4 h-4 shrink-0 mr-1"
+													@click="cleanChats" />
 											</div>
 											<ol class="flex flex-col gap-2">
-												<NuxtLink v-for="chat of chatsList"
-														:key="chat.id" :to="`/chats/${chat.id}`">
+												<NuxtLink
+													v-for="chat of chatsList"
+													:key="chat.id"
+													:to="`/chats/${chat.id}`">
 													<Button
 														theme="gray"
 														class="w-full flex-row gap-2 !ring-dark-300 !font-normal">
@@ -90,16 +125,23 @@ const deleteChat = (e: Event, id: number) => {
 															class="w-4 h-4 shrink-0" />
 														<span
 															class="grow flex justify-start text-left whitespace-nowrap overflow-hidden text-ellipsis"
-															>{{ chat.title }}</span
+															>{{
+																chat.title
+															}}</span
 														>
 														<Icon
 															name="tabler:edit"
 															class="w-4 h-4 shrink-0 cursor:pointer" />
 														<Icon
-															@click="deleteChat($event, chat.id)"
 															title="Delete Chat"
 															name="tabler:trash"
-															class="w-4 h-4 shrink-0" />
+															class="w-4 h-4 shrink-0"
+															@click="
+																deleteChat(
+																	$event,
+																	chat.id
+																)
+															" />
 													</Button>
 												</NuxtLink>
 											</ol>
