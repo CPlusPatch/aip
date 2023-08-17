@@ -10,9 +10,9 @@ definePageMeta({
 	layout: "account",
 });
 
-const loading = ref(true);
+const loading = ref(false);
 const token = useCookie("token");
-const isUploading = ref(true);
+const isUploading = ref(false);
 const avatarUrl = ref(user?.avatar ?? null);
 
 const saveUserData = () => {
