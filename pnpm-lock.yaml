@@ -63,8 +63,8 @@ dependencies:
     specifier: ^9.0.0
     version: 9.0.0
   webp-converter-browser:
-    specifier: ^1.0.3
-    version: 1.0.3
+    specifier: ^1.0.4
+    version: 1.0.4
 
 devDependencies:
   '@nuxtjs/eslint-config-typescript':
@@ -10624,8 +10624,8 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /webp-converter-browser@1.0.3:
-    resolution: {integrity: sha512-wCHoU6emfBWBTgcPNZKFH4jrx0Y3IDW3Vcp799MpyQwJyPnI0QTIYDiFxNX3FQ4T2FnFO7a9ZTZpzZoKoN/yqA==}
+  /webp-converter-browser@1.0.4:
+    resolution: {integrity: sha512-ZkcrrM4TyxBI7mPmE4uG6PU2MF5YXhKTtvub/ll/4ZjXM7THcms0C0tA10CwnsrLzRBC+ry/sUzwpW6vdPzA8g==}
     dependencies:
       '@babel/runtime': 7.22.10
     dev: false
