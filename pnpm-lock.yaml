@@ -39,8 +39,8 @@ dependencies:
     specifier: ^2.2.4
     version: 2.2.4
   openai:
-    specifier: 4.0.0-beta.12
-    version: 4.0.0-beta.12
+    specifier: 4.0.0
+    version: 4.0.0
   pg:
     specifier: ^8.11.0
     version: 8.11.0
@@ -2818,7 +2818,7 @@ packages:
   /@types/jsonwebtoken@9.0.2:
     resolution: {integrity: sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==}
     dependencies:
-      '@types/node': 18.16.18
+      '@types/node': 18.17.5
     dev: false
 
   /@types/marked@5.0.0:
@@ -8144,8 +8144,8 @@ packages:
       is-wsl: 2.2.0
     dev: true
 
-  /openai@4.0.0-beta.12:
-    resolution: {integrity: sha512-K7PrIyF+Rv2kI8/FKcb1ZiM4L9ORR5J8DnoSgOT+mHrR9d3eBkAdxqVJ4uCXLFTGh7rDzU4pbuD+DpfdgzL1IQ==}
+  /openai@4.0.0:
+    resolution: {integrity: sha512-UHv70gIw20pxu9tiUueE9iS+4U4eTGiTgQr+zlJ5aX4oj6LUUp+7mBn0xAqilawftwUB/biohPth2vcZFmoNYw==}
     hasBin: true
     dependencies:
       '@types/node': 18.17.5
