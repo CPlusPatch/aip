@@ -67,6 +67,11 @@ export class User extends BaseEntity {
 	})
 	stripe_id?: string;
 
+	@Column("boolean", {
+		default: false,
+	})
+	lastPaymentFailed: boolean;
+
 	@Column("jsonb", { nullable: true })
 	oauthAccounts?: { provider: string; id: string }[];
 }

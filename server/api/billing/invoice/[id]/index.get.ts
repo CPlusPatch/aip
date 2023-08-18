@@ -25,7 +25,7 @@ export default defineEventHandler(async event => {
 		},
 	});
 
-	if (invoice) {
+	if (invoice && invoice.isValid()) {
 		invoice.user.password = "";
 		return invoice;
 	} else {

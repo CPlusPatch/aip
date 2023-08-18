@@ -28,13 +28,11 @@ export default defineEventHandler(async event => {
 		},
 	});
 
+	invoices.forEach(i => {
+		i.user.password = "";
+	});
+
 	if (invoices) {
-		return invoices.map(i => ({
-			...i,
-			user: {
-				...i.user,
-				password: "",
-			},
-		}));
+		return invoices.filter(i => i.isValid());
 	}
 });

@@ -146,18 +146,7 @@ const emit = defineEmits<{
 }>();
 
 const buyPremium = () => {
-	useFetch(`/api/billing/order`, {
-		method: "POST",
-		body: JSON.stringify({
-			product: "PREMIUM",
-		}),
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-	}).then(res => {
-		res.data.value?.url && window.open(res.data.value.url, "_blank");
-	});
+	navigateTo(`/settings/subscription`);
 };
 </script>
 

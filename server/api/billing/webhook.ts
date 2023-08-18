@@ -1,6 +1,7 @@
 import Stripe from "stripe";
+import "stripe-event-types";
 import { Transaction } from "~/db/entities/Transaction";
-import { Subscriptions } from "~/db/entities/User";
+import { Subscriptions, User } from "~/db/entities/User";
 import { getConfig } from "~/utils/config";
 import { Invoice } from "~/db/entities/Invoice";
 
@@ -15,7 +16,7 @@ export default defineEventHandler(async event => {
 		telemetry: false,
 	});
 
-	let stripeEvent: Stripe.Event;
+	let stripeEvent: Stripe.DiscriminatedEvent;
 
 	function getBody(): Promise<Buffer> {
 		return new Promise(resolve => {
@@ -37,7 +38,7 @@ export default defineEventHandler(async event => {
 			await getBody(),
 			sig,
 			config.stripe.webhook_secret
-		);
+		) as Stripe.DiscriminatedEvent;
 	} catch (e: any) {
 		console.error(e.message);
 		throw createError({
@@ -111,6 +112,46 @@ export default defineEventHandler(async event => {
 					}
 				}
 			});
+
+			break;
+		}
+
+		// When the user manually ends their subscription
+		case "subscription_schedule.canceled": {
+			const event = stripeEvent.data.object;
+
+			const user = await User.findOneBy({
+				stripe_id: event.customer as string,
+			});
+
+			if (!user)
+				throw createError({
+					statusCode: 404,
+					message: "User not found",
+				});
+
+			user.subscription = Subscriptions.NONE;
+			user.save();
+
+			break;
+		}
+
+		case "invoice.payment_failed": {
+			const event = stripeEvent.data.object;
+
+			const user = await User.findOneBy({
+				stripe_id: event.customer as string,
+			});
+
+			if (!user)
+				throw createError({
+					statusCode: 404,
+					message: "User not found",
+				});
+
+			user.subscription = Subscriptions.NONE;
+			user.lastPaymentFailed = true;
+			user.save();
 
 			break;
 		}

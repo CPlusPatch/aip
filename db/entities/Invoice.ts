@@ -25,7 +25,7 @@ export class Invoice extends BaseEntity {
 	@Column("jsonb", {
 		nullable: true,
 	})
-	data: Stripe.Invoice;
+	data?: Stripe.Invoice;
 
 	@ManyToOne(() => User)
 	@JoinColumn()
@@ -40,4 +40,8 @@ export class Invoice extends BaseEntity {
 
 	@UpdateDateColumn()
 	edited_at?: Date;
+
+	isValid() {
+		return !!(this.data && this.stripe_id);
+	}
 }

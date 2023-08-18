@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Invoice } from "~/db/entities/Invoice";
-
 const token = useCookie("token");
 
 const invoiceId = useRoute().params.id ?? "";
@@ -12,7 +10,13 @@ const invoice = (
 			Authorization: `Bearer ${token.value}`,
 		},
 	})
-).data.value as Invoice;
+).data.value;
+
+if (!invoice)
+	throw createError({
+		statusCode: 404,
+		message: "Invoice not found",
+	});
 
 const products = (
 	await useFetch(`/api/billing/invoice/${invoiceId}/products`, {
@@ -74,7 +78,7 @@ definePageMeta({
 							<div class="text-sm leading-6 text-gray-400">
 								Invoice
 								<span class="text-gray-200"
-									>#{{ invoice.data.number }}</span
+									>#{{ invoice.data?.number }}</span
 								>
 							</div>
 							<div
@@ -107,7 +111,9 @@ definePageMeta({
 										Intl.NumberFormat("de-DE", {
 											style: "currency",
 											currency: "EUR",
-										}).format(invoice.data.total / 100)
+										}).format(
+											(invoice.data?.total ?? 0) / 100
+										)
 									}}
 								</dd>
 							</div>
@@ -129,7 +135,7 @@ definePageMeta({
 								</dt>
 								<dd
 									class="text-sm font-medium leading-6 text-gray-50">
-									{{ invoice.data.customer_name }}
+									{{ invoice.data?.customer_name }}
 								</dd>
 							</div>
 							<div
@@ -147,7 +153,7 @@ definePageMeta({
 											year: "numeric",
 											month: "long",
 											day: "numeric",
-										}).format(invoice.data.due_date ?? 0)
+										}).format(invoice.data?.due_date ?? 0)
 									}}</time>
 								</dd>
 							</div>
@@ -167,7 +173,7 @@ definePageMeta({
 						</dl>
 						<div class="mt-6 border-t border-gray-50/5 px-6 py-6">
 							<a
-								:href="invoice.data.invoice_pdf ?? '#'"
+								:href="invoice.data?.invoice_pdf ?? '#'"
 								class="text-sm font-semibold leading-6 text-gray-50"
 								>Download receipt
 								<span aria-hidden="true">&rarr;</span></a
@@ -206,7 +212,7 @@ definePageMeta({
 										year: "numeric",
 										month: "long",
 										day: "numeric",
-									}).format(invoice.data.due_date ?? 0)
+									}).format(invoice.data?.due_date ?? 0)
 								}}</time>
 							</dd>
 						</div>
@@ -225,20 +231,20 @@ definePageMeta({
 							<dt class="font-semibold text-gray-50">To</dt>
 							<dd class="mt-2 text-gray-400">
 								<span class="font-medium text-gray-50">{{
-									invoice.data.account_name
+									invoice.data?.account_name
 								}}</span
 								><br />{{
-									invoice.data.customer_address?.line1 ??
+									invoice.data?.customer_address?.line1 ??
 									"Unknown Address"
 								}}<br />{{
-									invoice.data.customer_address?.city ??
+									invoice.data?.customer_address?.city ??
 									"Unknown City"
 								}},
 								{{
-									invoice.data.customer_address?.state ??
+									invoice.data?.customer_address?.state ??
 									"Unknown State"
 								}},
-								{{ invoice.data.customer_address?.country }}
+								{{ invoice.data?.customer_address?.country }}
 							</dd>
 						</div>
 					</dl>
@@ -307,7 +313,7 @@ definePageMeta({
 											style: "currency",
 											currency: "EUR",
 										}).format(
-											(invoice.data.subtotal ?? 0) / 100
+											(invoice.data?.subtotal ?? 0) / 100
 										)
 									}}
 								</td>
@@ -325,7 +331,9 @@ definePageMeta({
 										Intl.NumberFormat("de-DE", {
 											style: "currency",
 											currency: "EUR",
-										}).format((invoice.data.tax ?? 0) / 100)
+										}).format(
+											(invoice.data?.tax ?? 0) / 100
+										)
 									}}
 								</td>
 							</tr>
@@ -343,7 +351,7 @@ definePageMeta({
 											style: "currency",
 											currency: "EUR",
 										}).format(
-											(invoice.data.total ?? 0) / 100
+											(invoice.data?.total ?? 0) / 100
 										)
 									}}
 								</td>

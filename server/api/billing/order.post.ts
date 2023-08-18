@@ -56,6 +56,7 @@ export default defineEventHandler(async event => {
 		customer: user.stripe_id || undefined,
 		success_url: `${url.origin}/settings/invoice`,
 		cancel_url: `${url.origin}/settings/invoice`,
+		billing_address_collection: "required",
 	});
 
 	const transaction = new Transaction();

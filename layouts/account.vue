@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from "~/db/entities/User";
+import { Subscriptions, User } from "~/db/entities/User";
 
 const user = (await useFetch(`/api/user/get`)).data.value as User;
 
@@ -16,30 +16,34 @@ const navigation = [
 		name: "User Settings",
 		href: "/settings/user",
 		icon: "tabler:home",
-		count: "5",
-		current: true,
+	},
+	{
+		name: "Subscription",
+		href: "/settings/subscription",
+		icon: "tabler:server-bolt",
 	},
 	{
 		name: "Invoices",
 		href: "/settings/invoice",
 		icon: "tabler:file-description",
-		current: false,
 	},
 ];
 </script>
 
 <template>
 	<div class="flex flex-row dark no-scrollbar">
-		<div class="hidden xl:flex xl:w-70 xl:flex-col">
+		<div class="hidden xl:flex xl:w-70 xl:flex-col shrink-0">
 			<!-- Sidebar component, swap this element with another sidebar if you like -->
 			<div
 				class="flex grow flex-col gap-y-5 overflow-y-auto bg-dark-800 px-4 border-r border-dark-200">
-				<div class="flex h-16 shrink-0 items-center px-2 mt-3">
+				<NuxtLink
+					to="/"
+					class="flex h-16 shrink-0 items-center px-2 mt-3">
 					<img
 						class="h-8 w-auto"
 						src="https://uden.ai/assets/img/logo/loder.png"
 						alt="Uden AI" />
-				</div>
+				</NuxtLink>
 				<nav class="flex flex-1 flex-col">
 					<ul role="list" class="flex flex-1 flex-col gap-y-7">
 						<li>
@@ -50,12 +54,27 @@ const navigation = [
 											theme="gray"
 											:class="[
 												'group flex gap-x-3 w-full !justify-start',
+												item.href ===
+													'/settings/subscription' &&
+													user.subscription ===
+														Subscriptions.PREMIUM &&
+													'!bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500',
 											]">
 											<Icon
 												:name="item.icon"
 												class="h-5 w-5 shrink-0"
 												aria-hidden="true" />
 											{{ item.name }}
+											<Icon
+												v-if="
+													item.href ===
+														'/settings/subscription' &&
+													user.subscription ===
+														Subscriptions.PREMIUM
+												"
+												name="tabler:bolt"
+												class="h-5 w-5 shrink-0 ml-auto"
+												aria-hidden="true" />
 										</Button>
 									</NuxtLink>
 								</li>

@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { User } from "~/db/entities/User";
-import { Invoice } from "~/db/entities/Invoice";
-
-const user = (await useFetch(`/api/user/get`)).data.value as User;
 const token = useCookie("token");
 
 const invoices = (
@@ -12,7 +8,7 @@ const invoices = (
 			Authorization: `Bearer ${token.value}`,
 		},
 	})
-).data.value as Invoice[];
+).data.value;
 
 definePageMeta({
 	layout: "account",
@@ -20,12 +16,12 @@ definePageMeta({
 </script>
 
 <template>
-	<div class="grow h-screen">
+	<div class="grow h-screen p-4">
 		Invoices:
 		<ol>
 			<li v-for="invoice of invoices" :key="invoice.id">
 				<NuxtLink :to="`/settings/invoice/${invoice.id}`"
-					>Invoice #{{ invoice.data.number }}</NuxtLink
+					>Invoice #{{ invoice.data?.number }}</NuxtLink
 				>
 			</li>
 		</ol>
