@@ -29,11 +29,6 @@ export default defineEventHandler(async event => {
 		},
 	});
 
-	chats.forEach(chat => {
-		// Delete the user's password from the chat
-		chat.user.password = "";
-	});
-
 	if (chats) {
 		return chats;
 	} else {

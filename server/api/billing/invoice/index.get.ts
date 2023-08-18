@@ -28,10 +28,6 @@ export default defineEventHandler(async event => {
 		},
 	});
 
-	invoices.forEach(i => {
-		i.user.password = "";
-	});
-
 	if (invoices) {
 		return invoices.filter(i => i.isValid());
 	}
