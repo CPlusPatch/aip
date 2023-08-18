@@ -74,4 +74,11 @@ export class User extends BaseEntity {
 
 	@Column("jsonb", { nullable: true })
 	oauthAccounts?: { provider: string; id: string }[];
+
+	toJSON() {
+		return {
+			...this,
+			password: "",
+		};
+	}
 }

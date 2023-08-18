@@ -28,7 +28,6 @@ export default defineEventHandler(async event => {
 	});
 
 	if (chat) {
-		chat.user.password = "";
 		return chat;
 	} else {
 		throw createError({
