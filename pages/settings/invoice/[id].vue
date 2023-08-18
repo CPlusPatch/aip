@@ -32,6 +32,10 @@ console.log(products);
 definePageMeta({
 	layout: "account",
 });
+
+useHead({
+	title: () => `Invoice #${invoice.data?.number}} · AIP`,
+});
 </script>
 
 <template>

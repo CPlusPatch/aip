@@ -13,6 +13,10 @@ const invoices = (
 definePageMeta({
 	layout: "account",
 });
+
+useHead({
+	title: `Invoices · AIP`,
+});
 </script>
 
 <template>

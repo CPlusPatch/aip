@@ -123,6 +123,10 @@ const oidcSignIn = async (oidcProvider: Config["oidc_providers"][0]) => {
 
 	loading.value = false;
 };
+
+useHead({
+	title: "Login · AIP",
+});
 </script>
 
 <template>

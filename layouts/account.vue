@@ -28,6 +28,10 @@ const navigation = [
 		icon: "tabler:file-description",
 	},
 ];
+
+useHead({
+	title: "",
+});
 </script>
 
 <template>

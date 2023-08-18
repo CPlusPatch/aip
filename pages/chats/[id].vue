@@ -21,6 +21,10 @@ if (!user)
 				next: "/",
 			})
 	);
+
+useHead({
+	title: `Chat · AIP`,
+});
 </script>
 
 <template>

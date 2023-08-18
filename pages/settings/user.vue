@@ -124,6 +124,10 @@ const linkOIDC = async (oidcProvider: Config["oidc_providers"][0]) => {
 
 	window.location.reload();
 };
+
+useHead({
+	title: `User Settings · AIP`,
+});
 </script>
 
 <template>

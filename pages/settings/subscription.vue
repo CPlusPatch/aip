@@ -41,6 +41,10 @@ const buyPremium = () => {
 		res.data.value?.url && window.open(res.data.value.url, "_blank");
 	});
 };
+
+useHead({
+	title: `Subscription · AIP`,
+});
 </script>
 
 <template>

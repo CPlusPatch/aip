@@ -54,8 +54,8 @@ export default defineEventHandler(async event => {
 		})),
 		mode: "subscription",
 		customer: user.stripe_id || undefined,
-		success_url: `${url.origin}/settings/invoice`,
-		cancel_url: `${url.origin}/settings/invoice`,
+		success_url: `${url.origin}/settings/subscription`,
+		cancel_url: `${url.origin}/settings/subscription`,
 		billing_address_collection: "required",
 	});
 
