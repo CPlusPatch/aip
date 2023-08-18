@@ -48,7 +48,7 @@
     "smol-toml": "^1.1.1",
     "stripe": "^12.18.0",
     "stripe-event-types": "^2.4.0",
-    "typeorm": "0.3.16",
+    "typeorm": "0.3.17",
     "uuid": "^9.0.0",
     "webp-converter-browser": "^1.0.4"
   },
