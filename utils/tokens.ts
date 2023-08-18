@@ -16,7 +16,6 @@ export async function getUserByToken(value: string) {
 	});
 
 	if (token?.user) {
-		token.user.password = "";
 		return token.user;
 	} else return null;
 }
