@@ -57,8 +57,8 @@ dependencies:
     specifier: ^2.4.0
     version: 2.4.0(stripe@12.18.0)
   typeorm:
-    specifier: 0.3.16
-    version: 0.3.16(pg@8.11.0)
+    specifier: 0.3.17
+    version: 0.3.17(pg@8.11.0)
   uuid:
     specifier: ^9.0.0
     version: 9.0.0
@@ -9882,8 +9882,8 @@ packages:
       is-typed-array: 1.1.12
     dev: true
 
-  /typeorm@0.3.16(pg@8.11.0):
-    resolution: {integrity: sha512-wJ4Qy1oqRKNDdZiBTTaVMqwo/XxC52Q7uNPTjltPgLhvIW173bL6Iad0lhptMOsFlpixFPaUu3PNziaRBwX2Zw==}
+  /typeorm@0.3.17(pg@8.11.0):
+    resolution: {integrity: sha512-UDjUEwIQalO9tWw9O2A4GU+sT3oyoUXheHJy4ft+RFdnRdQctdQ34L9SqE2p7LdwzafHx1maxT+bqXON+Qnmig==}
     engines: {node: '>= 12.9.0'}
     hasBin: true
     peerDependencies:
