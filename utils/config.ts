@@ -31,6 +31,11 @@ export const getConfig = () => {
 			secret_api_key: "",
 			webhook_secret: "",
 		},
+		smtp: {
+			host: "",
+			password: "",
+			user: "",
+		},
 	};
 
 	try {

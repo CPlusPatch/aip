@@ -75,10 +75,23 @@ export class User extends BaseEntity {
 	@Column("jsonb", { nullable: true })
 	oauthAccounts?: { provider: string; id: string }[];
 
+	@Column("varchar", { nullable: true })
+	emailVerificationToken?: string;
+
+	@Column("varchar", { nullable: true })
+	email: string;
+
+	@Column("boolean", {
+		default: false,
+	})
+	isEmailVerified: boolean;
+
 	toJSON() {
 		return {
 			...this,
 			password: "",
+			stripe_id: "",
+			emailVerificationToken: "",
 		};
 	}
 }

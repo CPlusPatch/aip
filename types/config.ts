@@ -16,6 +16,12 @@ export interface Config {
 		public_url: string;
 	};
 
+	smtp: {
+		user: string;
+		password: string;
+		host: string;
+	};
+
 	postgres: {
 		host: string;
 		port: number;
