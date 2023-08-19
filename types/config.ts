@@ -16,6 +16,13 @@ export interface Config {
 		public_url: string;
 	};
 
+	postgres: {
+		host: string;
+		port: number;
+		password: string;
+		username: string;
+	};
+
 	ai: {
 		base_url: string;
 		model: string;

@@ -6,14 +6,16 @@ import { Chat } from "./entities/Chat";
 import { Personality } from "./entities/Personality";
 import { Transaction } from "./entities/Transaction";
 import { Invoice } from "./entities/Invoice";
+import { getConfig } from "~/utils/config";
+
+const config = getConfig();
 
 const AppDataSource = new DataSource({
 	type: "postgres",
-	host: process.env.POSTGRES_HOST || "localhost",
-	port: Number(process.env.POSTGRES_PORT) || 5432,
-	username: process.env.POSTGRES_USERNAME,
-	password: process.env.POSTGRES_PASSWORD,
-	// database: "./web.sqlite",
+	host: config.postgres.host || "localhost",
+	port: config.postgres.port || 5432,
+	username: config.postgres.username || "aip",
+	password: config.postgres.password || "",
 	database: "aip",
 	synchronize: true,
 	entities: [User, Token, Chat, Personality, Transaction, Invoice],
