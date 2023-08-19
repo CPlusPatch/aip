@@ -56,6 +56,8 @@ export default defineEventHandler(async event => {
 	// Free robux!!
 	user.credits = 10_000;
 
+	console.log(config.smtp);
+
 	const client = new SMTPClient({
 		user: config.smtp.user,
 		password: config.smtp.password,
