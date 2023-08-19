@@ -89,22 +89,22 @@ const footerNavigation = {
 
 const features = [
 	{
-		name: "Push to deploy.",
+		name: "Unfiltered outputs",
 		description:
-			"Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione.",
-		icon: "",
+			'No more "As an AI model...", our technology lets you create without being hindered by arbitrary rules imposed by other vendors',
+		icon: "tabler:list-check",
 	},
 	{
-		name: "SSL certificates.",
+		name: "Cloud storage for your chats",
 		description:
-			"Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.",
-		icon: "",
+			"All of your chats are stored in the cloud across your devices, for an easy uninterrupted experience",
+		icon: "tabler:devices-check",
 	},
 	{
-		name: "Database backups.",
+		name: "Coding, chat and RP models",
 		description:
-			"Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. Et magna sit morbi lobortis.",
-		icon: "",
+			"We include programming, chat and roleplay models for your uses cases",
+		icon: "tabler:message-check",
 	},
 ];
 
@@ -112,6 +112,10 @@ const mobileMenuOpen = ref(false);
 
 definePageMeta({
 	layout: "landing",
+});
+
+useHead({
+	title: "AIP - Artificial Intelligence, working for you",
 });
 </script>
 
@@ -121,17 +125,20 @@ definePageMeta({
 		<header class="absolute inset-x-0 top-0 z-50">
 			<div
 				class="flex items-center justify-between gap-x-6 bg-dark-900 px-6 py-2.5 sm:pr-3.5 lg:pl-8">
-				<p class="text-sm leading-6 text-white">
+				<div class="text-sm leading-6 text-white">
 					<a href="#">
 						<strong class="font-semibold">Early Access</strong
 						><svg
 							viewBox="0 0 2 2"
 							class="mx-2 inline h-0.5 w-0.5 fill-current"
 							aria-hidden="true">
-							<circle cx="1" cy="1" r="1" /></svg
-						>AIP is now available to a select group of users for Early Access&nbsp;<span aria-hidden="true">&rarr;</span>
+							<circle cx="1" cy="1" r="1" />
+						</svg>
+						AIP is now available to a select group of users for
+						Early Access&nbsp;
+						<span aria-hidden="true">&rarr;</span>
 					</a>
-				</p>
+				</div>
 				<button
 					type="button"
 					class="-m-3 flex-none p-3 focus-visible:outline-offset-[-4px]">
@@ -331,17 +338,16 @@ definePageMeta({
 						<div class="lg:max-w-lg">
 							<h2
 								class="text-base font-semibold leading-7 text-orange-300">
-								Deploy faster
+								Early Access
 							</h2>
 							<p
 								class="mt-2 text-3xl font-bold tracking-tight text-gray-50 sm:text-4xl">
 								Access various AI models
 							</p>
 							<p class="mt-6 text-lg leading-8 text-gray-300">
-								Lorem ipsum, dolor sit amet consectetur
-								adipisicing elit. Maiores impedit perferendis
-								suscipit eaque, iste dolor cupiditate blanditiis
-								ratione.
+								Use our powerful open AI models with several new
+								features, such as integrated personalities and
+								different sizes to choose from
 							</p>
 							<dl
 								class="mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-300 lg:max-w-none">
