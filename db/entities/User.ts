@@ -57,7 +57,7 @@ export class User extends BaseEntity {
 	})
 	subscription: Subscriptions;
 
-	@Column("int", {
+	@Column("bigint", {
 		default: 0,
 	})
 	credits: number;
