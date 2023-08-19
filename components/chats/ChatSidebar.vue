@@ -101,7 +101,7 @@ const cleanChats = () => {
 									<span>
 										<div class="relative">
 											<div
-												class="sticky top-0 z-[16] flex flex-row justify-between items-center">
+												class="sticky bg-dark-800 top-0 z-[16] flex flex-row justify-between items-center">
 												<h3
 													class="h-9 pb-2 pt-3 px-1 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all">
 													Today
