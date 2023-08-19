@@ -34,13 +34,12 @@ const submit = async (e: Event) => {
 		token.value = (await response.json()).token;
 
 		if (new URLSearchParams(window.location.search).get("next")) {
-			useRouter().push(
+			window.location.href =
 				new URLSearchParams(window.location.search)
 					.get("next")
-					?.toString() ?? ""
-			);
+					?.toString() ?? "";
 		} else {
-			useRouter().push("/");
+			window.location.href = "/";
 		}
 	} else {
 		error.value = await response.json();
@@ -149,7 +148,7 @@ useHead({
 				<div>
 					<label
 						for="email"
-						class="block text-sm font-medium leading-6 text-gray-900"
+						class="block text-sm font-medium leading-6 text-gray-50"
 						>Username</label
 					>
 					<div class="mt-2">
@@ -168,7 +167,7 @@ useHead({
 					<div class="flex items-center justify-between">
 						<label
 							for="password"
-							class="block text-sm font-medium leading-6 text-gray-900"
+							class="block text-sm font-medium leading-6 text-gray-50"
 							>Password</label
 						>
 						<div class="text-sm">
