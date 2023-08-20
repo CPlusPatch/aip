@@ -106,6 +106,9 @@ devDependencies:
   nuxt-headlessui:
     specifier: ^1.1.4
     version: 1.1.4(vue@3.3.4)
+  nuxt-rate-limit:
+    specifier: ^1.1.0
+    version: 1.1.0
   nuxt-security:
     specifier: ^0.13.0
     version: 0.13.0
@@ -7644,6 +7647,16 @@ packages:
       - supports-color
       - vue
     dev: false
+
+  /nuxt-rate-limit@1.1.0:
+    resolution: {integrity: sha512-NVSqmCZuGBJboY1bKqJaP7RjqP5I3TcBTmCaa9sZzFqXJg7BwLWtynMgc5E7vv6KiTayKI64/FjPRWri6rPlsw==}
+    dependencies:
+      '@nuxt/kit': 3.6.5
+      defu: 6.1.2
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+    dev: true
 
   /nuxt-security@0.13.0:
     resolution: {integrity: sha512-D2u6ggMA2PVRQIVT/y8jXJ0D+7pxi0f627DlzVTFb6MOhZdazQYZGE54zI2g8fAvZciLHqZ8r+bbt3QlRLzIVg==}

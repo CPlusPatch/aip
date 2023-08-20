@@ -9,6 +9,7 @@ export default defineNuxtConfig({
 		"nuxt-headlessui",
 		"nuxt-icon",
 		"@vueuse/nuxt",
+		"nuxt-rate-limit",
 	],
 	hooks: {
 		"nitro:build:before": nitro => {
@@ -25,6 +26,15 @@ export default defineNuxtConfig({
 				},
 			],
 			htmlAttrs: { lang: "en-us" },
+		},
+	},
+	nuxtRateLimit: {
+		enabled: true,
+		routes: {
+			"/api/*": {
+				maxRequests: 10,
+				intervalSeconds: 60,
+			},
 		},
 	},
 	ssr: false,

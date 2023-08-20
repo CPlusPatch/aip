@@ -25,6 +25,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "nuxt": "^3.6.2",
     "nuxt-headlessui": "^1.1.4",
+    "nuxt-rate-limit": "^1.1.0",
     "nuxt-security": "^0.13.0",
     "prettier": "^3.0.1",
     "typescript": "^5.1.3",
