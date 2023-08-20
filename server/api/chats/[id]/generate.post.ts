@@ -4,11 +4,22 @@ import { nanoid } from "nanoid";
 import OpenAI from "openai";
 import { Subscriptions } from "~/db/entities/User";
 import { Chat } from "~/db/entities/Chat";
-import { getConfig } from "~/utils/config";
+import { getConfig, getWorkerConfig } from "~/utils/config";
 import { getUserByToken } from "~/utils/tokens";
+
+type Merge<A, B> = {
+	[K in keyof A | keyof B]: K extends keyof A & keyof B
+		? A[K] | B[K]
+		: K extends keyof B
+		? B[K]
+		: K extends keyof A
+		? A[K]
+		: never;
+};
 
 export default defineEventHandler(async event => {
 	const config = getConfig();
+	const workerConfig = getWorkerConfig();
 
 	const user = await getUserByToken(
 		event.node.req.headers.authorization?.split(" ")[1] ?? ""
@@ -31,60 +42,69 @@ export default defineEventHandler(async event => {
 		});
 	}
 
+	const body = await readBody<{
+		messages: {
+			role: "user" | "system" | "assistant";
+			content: string;
+			id: string;
+		}[];
+		temperature?: number;
+	}>(event);
+
+	// Get relevant chat from database and update messages
+	const chatId = event.context.params?.id ?? "";
+
+	const chat = await Chat.findOne({
+		where: {
+			id: Number(chatId),
+			user: {
+				id: user.id,
+			},
+		},
+		relations: {
+			user: true,
+		},
+	});
+
+	if (!chat) {
+		throw createError({
+			statusCode: 404,
+			message: "Chat not found",
+		});
+	}
+
 	// Fetch file from /tmp/aip-workers.json and read contents
-	let workers: {
-		id: string;
-		occupied: boolean;
-	}[] = [];
+	let workers: Merge<
+		(typeof workerConfig.workers)[0],
+		{
+			occupied: boolean;
+		}
+	>[] = [];
 
 	try {
 		workers = JSON.parse(
 			await readFileSync("/tmp/aip-workers.json", "utf-8")
 		);
 	} catch (e) {
-		workers = config.ai.models.map(model => ({
-			id: model.id,
+		workers = workerConfig.workers.map(model => ({
+			...model,
 			occupied: false,
 		}));
 	}
 
 	const nextAvailableWorkerIndex = workers.findIndex(
-		worker => !worker.occupied
+		worker => !worker.occupied && worker.model === chat.model
 	);
+
+	if (nextAvailableWorkerIndex === -1) {
+		throw createError({
+			statusCode: 503,
+			message: "No available workers",
+		});
+	}
 
 	try {
 		event.node.res.writeHead(200, { "Content-Type": "text/plain" });
-
-		const body = await readBody<{
-			messages: {
-				role: "user" | "system" | "assistant";
-				content: string;
-				id: string;
-			}[];
-			temperature?: number;
-		}>(event);
-
-		// Get relevant chat from database and update messages
-		const chatId = event.context.params?.id ?? "";
-
-		const chat = await Chat.findOne({
-			where: {
-				id: Number(chatId),
-				user: {
-					id: user.id,
-				},
-			},
-			relations: {
-				user: true,
-			},
-		});
-
-		if (!chat) {
-			throw createError({
-				statusCode: 404,
-				message: "Chat not found",
-			});
-		}
 
 		chat.messages = body.messages;
 
@@ -94,13 +114,13 @@ export default defineEventHandler(async event => {
 		workers[nextAvailableWorkerIndex].occupied = true;
 		await writeFileSync("/tmp/aip-workers.json", JSON.stringify(workers));
 
-		const worker = config.ai.models.find(
+		const worker = workerConfig.workers.find(
 			m => m.id === workers[nextAvailableWorkerIndex].id
 		);
 
 		const openai = new OpenAI({
 			apiKey: "",
-			baseURL: `${config.ai.base_url}:${worker?.port ?? 0}/v1`,
+			baseURL: `${worker?.address}/v1`,
 		});
 
 		let newMessage = "";
@@ -144,6 +164,8 @@ export default defineEventHandler(async event => {
 		];
 
 		await chat.save();
+	} catch (e) {
+		console.error(e);
 	} finally {
 		// Get new changes
 		workers = JSON.parse(

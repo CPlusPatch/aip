@@ -49,7 +49,7 @@ export const getConfig = () => {
 	return config;
 };
 
-export const getWorkerConfigConfig = () => {
+export const getWorkerConfig = () => {
 	let config: WorkerConfig = {
 		workers: [],
 	};

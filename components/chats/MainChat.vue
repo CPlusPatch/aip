@@ -10,7 +10,6 @@ const props = defineProps<{
 const token = useCookie("token");
 
 const isLoading = ref(false);
-const errorMessage = ref("");
 const message = ref("");
 const credits = ref(
 	props.user.subscription === Subscriptions.PREMIUM
@@ -42,16 +41,19 @@ const messages = ref<
 		id: string;
 	}[]
 >(chat.data.value.messages);
+const error = ref<{
+	statusCode: number;
+	message: string;
+} | null>(null);
 
 const sendMessage = async (e: Event) => {
 	e.preventDefault();
 
 	// Don't send empty messages
 	if (message.value.length < 1) {
-		errorMessage.value = "Please enter a message.";
 		return;
 	} else {
-		errorMessage.value = "";
+		error.value = null;
 	}
 	isLoading.value = true;
 
@@ -86,6 +88,12 @@ const sendMessage = async (e: Event) => {
 		const lastMessageFromSystemIndex = messages.value.findLastIndex(
 			message => message.role === "assistant"
 		);
+
+		if (!response.ok) {
+			error.value = await response.json();
+			isLoading.value = false;
+			return;
+		}
 
 		// Read stream from body and add the outputs to the last system message
 		const reader = response.body?.getReader();
@@ -122,9 +130,6 @@ const sendMessage = async (e: Event) => {
 		console.log(messages.value);
 	} catch (error: any) {
 		console.error(error);
-		errorMessage.value = error.message;
-
-		isLoading.value = false;
 	}
 };
 
@@ -247,6 +252,12 @@ const buyPremium = () => {
 								Click here
 							</button>
 							to purchase AIP Supporter for unlimited access
+						</div>
+						<div
+							v-if="error"
+							class="mx-auto py-5 text-gray-100 text-center">
+							<Icon name="fluent-emoji:warning" class="mr-1" />
+							An error happened: {{ error.message }}
 						</div>
 						<div class="h-32 md:h-48 flex-shrink-0"></div>
 					</div>

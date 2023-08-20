@@ -54,7 +54,7 @@ export interface Config {
 export interface WorkerConfig {
 	workers: {
 		id: string;
-		mode: string;
+		model: string;
 		address: string;
 		uncensored: boolean;
 	}[];

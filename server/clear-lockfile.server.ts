@@ -1,13 +1,13 @@
 import { writeFileSync } from "fs";
-import { getConfig } from "~/utils/config";
+import { getWorkerConfig } from "~/utils/config";
 
 export default async () => {
-	const config = getConfig();
+	const workerConfig = getWorkerConfig();
 	await writeFileSync(
 		"/tmp/aip-workers.json",
 		JSON.stringify(
-			config.ai.models.map(model => ({
-				id: model.id,
+			workerConfig.workers.map(model => ({
+				...model,
 				occupied: false,
 			}))
 		)
