@@ -7,7 +7,7 @@ export const models = [
 		model: "L2-7BU-L1",
 		description:
 			"Smaller model, useful for quick testing and when you need faster results",
-		tiers: [Subscriptions.NONE],
+		tiers: [Subscriptions.NONE, Subscriptions.PREMIUM],
 	},
 	{
 		name: "Perseus Pro",
@@ -15,7 +15,7 @@ export const models = [
 		model: "L2-13BU-L1",
 		description:
 			"Larger model, can do more complicated tasks such as poetry or explanations",
-		tiers: [Subscriptions.NONE],
+		tiers: [Subscriptions.NONE, Subscriptions.PREMIUM],
 	},
 	{
 		name: "Perseus Code",
