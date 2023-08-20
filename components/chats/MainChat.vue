@@ -34,6 +34,7 @@ if (!chat.data.value) {
 	});
 }
 
+const model = ref(chat.data.value.model || "");
 const messages = ref<
 	{
 		content: string;
@@ -67,6 +68,7 @@ const sendMessage = async (e: Event) => {
 				method: "POST",
 				body: JSON.stringify({
 					messages: messages.value,
+					model: model.value,
 				}),
 				headers: {
 					"Content-Type": "application/json",
@@ -134,6 +136,23 @@ const handleKeypress = (e: KeyboardEvent) => {
 	}
 };
 
+const updateModel = () => {
+	fetch(`/api/chats/${chat.data.value?.id}`, {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+		body: JSON.stringify({
+			model: model.value,
+		}),
+	}).then(res => {
+		if (!res.ok) {
+			alert("Error saving model");
+		}
+	});
+};
+
 onMounted(() => {
 	if (textareaRef.value) {
 		textareaRef.value.style.height = "24px";
@@ -174,9 +193,15 @@ const buyPremium = () => {
 											class="w-6 h-6" />
 									</Button>
 								</div>
+								<ChatsModelSelectorButton
+									:model="model"
+									@update:model="
+										newModel => (model = newModel)
+									"
+									@click="updateModel()" />
 								<div
 									class="flex flex-1 flex-grow items-center gap-1 p-1 text-gray-600 dark:text-gray-200 sm:justify-center sm:p-0">
-									<span>Default (Pro Uncensored)</span>
+									<span>{{ model }}</span>
 								</div>
 								<div class="flex flex-shrink flex-row">
 									<Button

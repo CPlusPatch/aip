@@ -31,10 +31,15 @@ export class Chat extends BaseEntity {
 		nullable: true,
 	})
 	@JoinColumn()
-	personality: Personality;
+	personality?: Personality;
 
 	@Column("varchar")
 	title: string;
+
+	@Column("varchar", {
+		default: "L2-7BU-L1",
+	})
+	model: string;
 
 	@CreateDateColumn()
 	created_at?: Date;

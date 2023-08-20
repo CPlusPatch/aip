@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { parse } from "smol-toml";
-import { Config } from "types/config";
+import { Config, WorkerConfig } from "types/config";
 
 export const getConfig = () => {
 	let config: Config = {
@@ -42,6 +42,22 @@ export const getConfig = () => {
 		config = parse(
 			readFileSync("./config/config.toml").toString("utf-8")
 		) as unknown as Config;
+	} catch (err) {
+		console.error(err);
+	}
+
+	return config;
+};
+
+export const getWorkerConfigConfig = () => {
+	let config: WorkerConfig = {
+		workers: [],
+	};
+
+	try {
+		config = parse(
+			readFileSync("./config/workers.toml").toString("utf-8")
+		) as unknown as WorkerConfig;
 	} catch (err) {
 		console.error(err);
 	}

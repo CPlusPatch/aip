@@ -150,7 +150,14 @@ const cleanChats = () => {
 								</div>
 							</div>
 						</div>
-						<div class="pt-2 empty:hidden">
+						<div class="pt-2 empty:hidden flex flex-col gap-4">
+							<NuxtLink to="/personalities" class="w-full">
+								<Button theme="gray" class="w-full">
+									<Icon
+										name="tabler:users"
+										class="h-4 w-4 mr-2" />Personalities
+								</Button>
+							</NuxtLink>
 							<NuxtLink to="/settings/user">
 								<Button
 									theme="gray"

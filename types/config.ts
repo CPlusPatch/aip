@@ -50,3 +50,12 @@ export interface Config {
 		};
 	};
 }
+
+export interface WorkerConfig {
+	workers: {
+		id: string;
+		mode: string;
+		address: string;
+		uncensored: boolean;
+	}[];
+}

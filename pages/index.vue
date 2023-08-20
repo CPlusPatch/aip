@@ -18,6 +18,9 @@ const chat = await useFetch("/api/chats/create", {
 		"Content-Type": "application/json",
 		Authorization: `Bearer ${token.value}`,
 	},
+	body: JSON.stringify({
+		model: "L2-13BU-L1",
+	}),
 });
 
 if (!chat.data.value) {
