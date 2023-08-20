@@ -5,6 +5,7 @@ import { User } from "~/db/entities/User";
 import { createPasswordHash, createSalt } from "~/utils/passwords";
 import { getConfig } from "~/utils/config";
 import { Token } from "~/db/entities/Token";
+import { tempmailDomains } from "~/utils/tempmails";
 
 function randomString(length: number, chars: string) {
 	let result = "";
@@ -33,6 +34,7 @@ export default defineEventHandler(async event => {
 
 	user.username = body.username.toLowerCase();
 
+	// Check if mail is valid
 	if (
 		!body.email.match(
 			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -43,6 +45,39 @@ export default defineEventHandler(async event => {
 			message: "Invalid email",
 		});
 	}
+
+	// Check if email is from known tempmail provider
+	if (tempmailDomains.domains.includes(body.email.split("@")[1])) {
+		throw createError({
+			statusCode: 400,
+			message: "Email provider is not allowed",
+		});
+	}
+
+	// Check if mail already exists in database
+	const foundUsers1 = await User.findBy({
+		email: body.email,
+	});
+
+	if (foundUsers1.length > 0) {
+		throw createError({
+			statusCode: 400,
+			message: "Email already exists",
+		});
+	}
+
+	// Check if username already exists in database
+	const foundUsers2 = await User.findBy({
+		username: body.username,
+	});
+
+	if (foundUsers2.length > 0) {
+		throw createError({
+			statusCode: 400,
+			message: "Username already exists",
+		});
+	}
+
 	user.email = body.email;
 
 	user.emailVerificationToken = randomString(

@@ -14,8 +14,6 @@ const emit = defineEmits<{
 
 const selected = ref(models.find(m => m.model === props.model) ?? models[0]);
 
-emit("update:model", selected.value.model);
-
 const updateModel = (option: any) => {
 	emit("update:model", option.model);
 	emit("click");

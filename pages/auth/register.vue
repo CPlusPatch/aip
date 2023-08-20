@@ -207,13 +207,25 @@ const verifyEmail = async () => {
 
 								<div
 									v-if="error"
-									class="rounded bg-red-200 ring-1 ring-red-600 p-4 text-sm flex flex-col gap-2">
-									<strong class="font-semibold text-gray-900"
-										>An error occured</strong
-									>
-									<span class="text-gray-700">{{
-										error.message
-									}}</span>
+									class="rounded-md bg-red-200 p-4">
+									<div class="flex">
+										<div class="flex-shrink-0">
+											<Icon
+												name="tabler:circle-x-filled"
+												class="h-5 w-5 text-red-400"
+												aria-hidden="true" />
+										</div>
+										<div class="ml-3">
+											<h3
+												class="text-sm font-medium text-red-800">
+												An error occured
+											</h3>
+											<div
+												class="mt-2 text-sm text-red-700">
+												{{ error.message }}
+											</div>
+										</div>
+									</div>
 								</div>
 
 								<div>
@@ -280,13 +292,25 @@ const verifyEmail = async () => {
 
 								<div
 									v-if="error"
-									class="rounded bg-red-200 ring-1 ring-red-600 p-4 text-sm flex flex-col gap-2">
-									<strong class="font-semibold text-gray-900"
-										>An error occured</strong
-									>
-									<span class="text-gray-700">{{
-										error.message
-									}}</span>
+									class="rounded-md bg-red-200 p-4">
+									<div class="flex">
+										<div class="flex-shrink-0">
+											<Icon
+												name="tabler:circle-x-filled"
+												class="h-5 w-5 text-red-400"
+												aria-hidden="true" />
+										</div>
+										<div class="ml-3">
+											<h3
+												class="text-sm font-medium text-red-800">
+												An error occured
+											</h3>
+											<div
+												class="mt-2 text-sm text-red-700">
+												{{ error.message }}
+											</div>
+										</div>
+									</div>
 								</div>
 
 								<div>

@@ -22,7 +22,9 @@ export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column("varchar")
+	@Column("varchar", {
+		unique: true,
+	})
 	username: string;
 
 	@Column("varchar")
@@ -78,7 +80,7 @@ export class User extends BaseEntity {
 	@Column("varchar", { nullable: true })
 	emailVerificationToken?: string;
 
-	@Column("varchar", { nullable: true })
+	@Column("varchar", { nullable: true, unique: true })
 	email: string;
 
 	@Column("boolean", {
