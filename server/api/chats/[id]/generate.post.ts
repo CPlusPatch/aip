@@ -99,7 +99,7 @@ export default defineEventHandler(async event => {
 	if (nextAvailableWorkerIndex === -1) {
 		throw createError({
 			statusCode: 503,
-			message: "No available workers",
+			message: "No available workers. Please choose a different model.",
 		});
 	}
 

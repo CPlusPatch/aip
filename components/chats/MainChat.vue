@@ -200,6 +200,7 @@ const buyPremium = () => {
 								</div>
 								<ChatsModelSelectorButton
 									:model="model"
+									:user="user"
 									@update:model="
 										newModel => (model = newModel)
 									"
@@ -300,7 +301,7 @@ const buyPremium = () => {
 				<div
 					class="pb-3 pt-2 text-center text-xs text-gray-600 dark:text-gray-300 md:px-[60px] md:pb-6 md:pt-3">
 					<span
-						>May produce inaccurate output. Exercice caution during
+						>May produce inaccurate output. Exercise caution during
 						usage.</span
 					>
 				</div>

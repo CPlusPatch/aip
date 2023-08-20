@@ -1,6 +1,7 @@
 import DOMPurify from "isomorphic-dompurify";
 import { getUserByToken } from "~/utils/tokens";
 import { Chat } from "~/db/entities/Chat";
+import { models } from "~/utils/models";
 
 export default defineEventHandler(async event => {
 	const user = await getUserByToken(
@@ -47,6 +48,26 @@ export default defineEventHandler(async event => {
 	delete body.messages;
 	delete body.id;
 	delete body.user;
+
+	// Check if model is valid
+	if (body.model && !models.find(model => model.model === body.model)) {
+		throw createError({
+			statusCode: 400,
+			message: "Invalid model",
+		});
+	}
+
+	// Check if model is accessible to the user's subscription level
+	if (
+		!models
+			.find(model => model.model === body.model)
+			?.tiers.includes(user.subscription)
+	) {
+		throw createError({
+			statusCode: 402,
+			message: "Please buy a subscription to use this model",
+		});
+	}
 
 	// Save every changed body attribute to chat, then save
 	Object.entries(body).forEach(([key, value]) => {
