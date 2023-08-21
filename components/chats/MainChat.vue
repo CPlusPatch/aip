@@ -172,6 +172,12 @@ const emit = defineEmits<{
 const buyPremium = () => {
 	navigateTo(`/settings/subscription`);
 };
+
+const adjustTextareaHeight = (e: Event) => {
+	const target = e.target as HTMLTextAreaElement;
+	target.style.height = "24px";
+	target.style.height = `${target.scrollHeight}px`;
+};
 </script>
 
 <template>
@@ -198,7 +204,7 @@ const buyPremium = () => {
 											class="w-6 h-6" />
 									</Button>
 								</div>
-								<ChatsModelSelectorButton
+								<ChatsModelSelector
 									:model="model"
 									:user="user"
 									@update:model="
@@ -280,12 +286,13 @@ const buyPremium = () => {
 								rows="1"
 								:disabled="credits <= 0"
 								placeholder="Send a message"
-								class="m-0 grow disabled:cursor-not-allowed resize-none ml-2 border-0 bg-transparent p-0 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pr-12 pl-3 md:pl-0"
+								class="m-0 grow max-h-25 disabled:cursor-not-allowed resize-none overflow-hidden ml-2 border-0 bg-transparent p-0 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pr-12 pl-3 md:pl-0"
 								style="
 									max-height: 200px;
 									height: 24px;
 									overflow-y: hidden;
 								"
+								@input="adjustTextareaHeight"
 								@keydown="handleKeypress"></textarea
 							><button
 								class="p-1 rounded-md dark:hover:bg-gray-900 dark:disabled:hover:bg-transparent disabled:text-gray-400 enabled:bg-brand-purple text-white transition-colors disabled:opacity-40"

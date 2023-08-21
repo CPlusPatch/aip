@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import OpenAI from "openai";
 import { Subscriptions } from "~/db/entities/User";
 import { Chat } from "~/db/entities/Chat";
-import { getConfig, getWorkerConfig } from "~/utils/config";
+import { getWorkerConfig } from "~/utils/config";
 import { getUserByToken } from "~/utils/tokens";
 
 type Merge<A, B> = {
@@ -18,7 +18,7 @@ type Merge<A, B> = {
 };
 
 export default defineEventHandler(async event => {
-	const config = getConfig();
+	// const config = getConfig();
 	const workerConfig = getWorkerConfig();
 
 	const user = await getUserByToken(
@@ -127,7 +127,7 @@ export default defineEventHandler(async event => {
 
 		const stream = await openai.chat.completions.create({
 			messages: body.messages as any,
-			model: config.ai.model,
+			model: chat.model,
 			stream: true,
 			temperature: body.temperature ?? 0.7,
 			max_tokens: 4096,

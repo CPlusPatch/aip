@@ -6,6 +6,36 @@
 # 001 = Worker number
 # T = Testing
 
+#[[workers]]
+#id = "L2-13BU-X1-001T"
+#model = "L2_13BU_L1"
+#uncensored = true
+#address = "http://172.23.207.195:2830"
+#
+#[[workers]]
+#id = "L2-13BU-X1-001T"
+#model = "L2-13BU-L1"
+#uncensored = true
+#address = "http://172.23.207.195:2864"
+#
+#[[workers]]
+#id = "L2-13BU-X1-002T"
+#model = "L2-13BU-L1"
+#uncensored = true
+#address = "http://172.23.207.195:2865"
+#
+#[[workers]]
+#id = "L2-13BU-X1-003T"
+#model = "L2-13BU-L1"
+#uncensored = true
+#address = "http://172.23.207.195:2866"
+#
+#[[workers]]
+#id = "L2-13BU-X1-004T"
+#model = "L2-13BU-L1"
+#uncensored = true
+#address = "http://172.23.207.195:2867"
+
 [[workers]]
 id = "L2-13BU-L1-001T"
 model = "L2-13BU-L1"
@@ -20,8 +50,8 @@ uncensored = true
 address = "http://192.168.2.109:2865"
 
 [[workers]]
-id = "L2-13BU-L1-003"
+id = "L2-13BU-L1-003T"
 size = "13B"
-model = "L2-13BU-L1T"
+model = "L2-13BU-L1"
 uncensored = true
 address = "http://192.168.2.109:2866"
