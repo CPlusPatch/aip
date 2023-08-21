@@ -13,7 +13,12 @@ definePageMeta({
 const loading = ref(false);
 const token = useCookie("token");
 const isUploading = ref(false);
-const avatarUrl = ref(user?.avatar ?? null);
+const avatarUrl = ref(
+	user?.avatar ||
+		`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+			user.display_name
+		)}`
+);
 
 const saveUserData = () => {
 	loading.value = true;

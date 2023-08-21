@@ -166,7 +166,12 @@ const cleanChats = () => {
 									<div class="flex items-center">
 										<img
 											class="inline-block h-9 w-9 rounded"
-											:src="user?.avatar"
+											:src="
+												user?.avatar ||
+												`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+													user.display_name
+												)}`
+											"
 											alt="" />
 										<div class="ml-3">
 											<p

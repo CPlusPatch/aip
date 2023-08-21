@@ -44,8 +44,7 @@ export default defineEventHandler(async event => {
 		])
 	);
 
-	// Dont allow changing messages or endpoint or user via this endpoint
-	delete body.messages;
+	// Dont allow changing user via this endpoint
 	delete body.id;
 	delete body.user;
 
@@ -59,6 +58,7 @@ export default defineEventHandler(async event => {
 
 	// Check if model is accessible to the user's subscription level
 	if (
+		body.model &&
 		!models
 			.find(model => model.model === body.model)
 			?.tiers.includes(user.subscription)
@@ -71,6 +71,7 @@ export default defineEventHandler(async event => {
 
 	// Save every changed body attribute to chat, then save
 	Object.entries(body).forEach(([key, value]) => {
+		if (!["messages", "model"].includes(key)) return;
 		// @ts-ignore
 		chat[key] = value;
 	});

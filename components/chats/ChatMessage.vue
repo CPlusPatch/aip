@@ -20,6 +20,10 @@ const copyText = (text: string) => {
 		showCopyButtonCheck.value = false;
 	}, 1000);
 };
+
+const emit = defineEmits<{
+	(event: "redact", id: string): void;
+}>();
 </script>
 
 <template>
@@ -42,7 +46,12 @@ const copyText = (text: string) => {
 							v-else
 							alt="User"
 							loading="lazy"
-							:src="user?.avatar"
+							:src="
+								user?.avatar ||
+								`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+									user.display_name
+								)}`
+							"
 							class="rounded w-full h-full" />
 					</div>
 				</div>
@@ -75,6 +84,12 @@ const copyText = (text: string) => {
 									: 'tabler:copy'
 							"
 							class="h-4 w-4" />
+					</button>
+					<button
+						title="Redact message"
+						class="!p-1.5 flex items-center justify-center rounded-md text-gray-400 hover:bg-dark-700 hover:text-gray-200 md:invisible md:group-hover:visible"
+						@click="emit('redact', message.id)">
+						<Icon name="tabler:trash" class="h-4 w-4" />
 					</button>
 				</div>
 				<div class="flex justify-between lg:block"></div>

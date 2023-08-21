@@ -137,6 +137,12 @@ export default defineEventHandler(async event => {
 			const chunk = part.choices[0]?.delta?.content || "";
 			event.node.res.write(chunk);
 			newMessage += chunk;
+
+			if (event.node.res.closed) {
+				event.node.res.end();
+				break;
+			}
+
 			if ([Subscriptions.PREMIUM].includes(user.subscription)) {
 				// Do nothing
 			} else {

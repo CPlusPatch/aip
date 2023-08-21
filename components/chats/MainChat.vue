@@ -16,7 +16,8 @@ const credits = ref(
 		? Infinity
 		: props.user.credits
 );
-// const bottomOfChatRef = ref<HTMLElement | null>(null);
+const isGenerating = ref(false);
+const bottomOfChatRef = ref<HTMLElement | null>(null);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const chat = await useFetch(`/api/chats/${props.id}/`, {
@@ -57,6 +58,10 @@ const sendMessage = async (e: Event) => {
 	}
 	isLoading.value = true;
 
+	bottomOfChatRef?.value?.scrollIntoView({
+		behavior: "smooth",
+	});
+
 	// Add the message to the conversation
 	messages.value.push({ content: message.value, role: "user", id: nanoid() });
 
@@ -95,12 +100,22 @@ const sendMessage = async (e: Event) => {
 			return;
 		}
 
+		isGenerating.value = true;
+
+		bottomOfChatRef?.value?.scrollIntoView({
+			behavior: "smooth",
+		});
+
 		// Read stream from body and add the outputs to the last system message
 		const reader = response.body?.getReader();
 		if (reader) {
 			let result = await reader.read();
 			while (!result.done) {
 				if (isLoading.value) isLoading.value = false;
+				if (!isGenerating.value) {
+					await reader.cancel();
+					break;
+				}
 				const decoder = new TextDecoder();
 				const chunk = decoder.decode(result.value, { stream: true });
 				credits.value -= chunk.length;
@@ -126,6 +141,8 @@ const sendMessage = async (e: Event) => {
 			const chunk = decoder.decode(result.value, { stream: true });
 			messages.value[lastMessageFromSystemIndex].content += chunk;
 		}
+
+		isGenerating.value = false;
 
 		console.log(messages.value);
 	} catch (error: any) {
@@ -177,6 +194,27 @@ const adjustTextareaHeight = (e: Event) => {
 	const target = e.target as HTMLTextAreaElement;
 	target.style.height = "24px";
 	target.style.height = `${target.scrollHeight}px`;
+};
+
+const redact = (id: string) => {
+	// Remove message from messages
+	const index = messages.value.findIndex(m => m.id === id);
+	messages.value.splice(index, 1);
+
+	fetch(`/api/chats/${chat.data.value?.id}`, {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token.value}`,
+		},
+		body: JSON.stringify({
+			messages: messages.value,
+		}),
+	}).then(res => {
+		if (!res.ok) {
+			alert("Error redacting message");
+		}
+	});
 };
 </script>
 
@@ -243,7 +281,8 @@ const adjustTextareaHeight = (e: Event) => {
 							) as any"
 							:key="message.id"
 							:message="message!"
-							:user="user" />
+							:user="user"
+							@redact="redact" />
 						<div
 							v-if="isLoading"
 							class="flex flex-row mx-auto py-5 text-gray-100 items-center gap-3">
@@ -267,13 +306,23 @@ const adjustTextareaHeight = (e: Event) => {
 							An error happened: {{ error.message }}
 						</div>
 						<div class="h-32 md:h-48 flex-shrink-0"></div>
+						<div ref="bottomOfChatRef" class="w-full h-0"></div>
 					</div>
 				</div>
 			</div>
 			<div
 				class="absolute bottom-0 pt-20 left-0 w-full bg-gradient-to-b from-transparent to-dark-600 bg-transparent dark:md:bg-vert-dark-gradient pt-2 md:pl-2 md:w-[calc(100%-.5rem)]">
+				<div class="mx-auto w-full flex justify-center gap-2">
+					<Button
+						v-if="isGenerating"
+						theme="gray"
+						@click="isGenerating = false"
+						>Stop generation</Button
+					>
+					<!-- <Button theme="gray">Regenerate</Button> -->
+				</div>
 				<form
-					class="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
+					class="stretch mx-2 mt-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
 					<div
 						class="relative flex h-full flex-1 items-stretch md:flex-col"
 						role="presentation">
@@ -296,7 +345,9 @@ const adjustTextareaHeight = (e: Event) => {
 								@keydown="handleKeypress"></textarea
 							><button
 								class="p-1 rounded-md dark:hover:bg-gray-900 dark:disabled:hover:bg-transparent disabled:text-gray-400 enabled:bg-brand-purple text-white transition-colors disabled:opacity-40"
-								:disabled="message.length === 0 || credits <= 0"
+								:disabled="
+									message.trim().length === 0 || credits <= 0
+								"
 								@click="sendMessage">
 								<Icon
 									name="tabler:send"
