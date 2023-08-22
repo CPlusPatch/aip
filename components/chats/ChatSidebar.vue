@@ -76,119 +76,115 @@ const cleanChats = () => {
 
 <template>
 	<div
-		class="dark flex-shrink-0 overflow-x-hidden bg-dark-800 font-['Inter'] block md:w-[268px] w-full h-full">
-		<div class="h-full">
-			<div class="flex h-full min-h-0 flex-col">
-				<div
-					class="scrollbar-trigger relative h-full w-full flex-1 items-start border-white/20">
-					<nav
-						class="flex h-full w-full flex-col p-2"
-						aria-label="Chat history">
-						<div class="mb-1 flex flex-row gap-2">
-							<NuxtLink to="/" class="w-full">
-								<Button theme="orange" class="w-full">
-									<Icon
-										name="tabler:plus"
-										class="h-4 w-4 mr-2" />New chat
-								</Button>
-							</NuxtLink>
-						</div>
-						<div
-							class="flex-col flex-1 transition-opacity duration-500 overflow-y-auto">
-							<div
-								class="flex flex-col gap-2 pb-2 text-gray-100 text-sm">
-								<div>
-									<span>
-										<div class="relative">
-											<div
-												class="sticky bg-dark-800 top-0 z-[16] flex flex-row justify-between items-center">
-												<h3
-													class="h-9 pb-2 pt-3 px-1 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all">
-													Today
-												</h3>
+		class="dark flex-shrink-0 bg-dark-800 font-['Inter'] block md:w-[268px] w-full h-full">
+		<div
+			class="max-h-screen w-full flex flex-col overflow-hidden border-white/20">
+			<NuxtLink to="/" class="flex h-16 shrink-0 items-center px-2 mt-3">
+				<img
+					class="h-8 w-auto"
+					src="https://uden.ai/assets/img/logo/loder.png"
+					alt="Uden AI" />
+			</NuxtLink>
+			<div class="mb-1 flex flex-row gap-2 px-2 mt-3">
+				<NuxtLink to="/" class="w-full">
+					<Button theme="orange" class="w-full">
+						<Icon name="tabler:plus" class="h-4 w-4 mr-2" />New chat
+					</Button>
+				</NuxtLink>
+			</div>
+			<nav
+				class="overflow-y-scroll h-1/2 no-scrollbar w-full flex-col px-2 pb-2"
+				aria-label="Chat history">
+				<div class="flex-col flex-1 transition-opacity duration-500">
+					<div class="flex flex-col gap-2 pb-2 text-gray-100 text-sm">
+						<div>
+							<span>
+								<div class="relative">
+									<div
+										class="sticky bg-dark-800 top-0 z-[16] flex flex-row justify-between items-center">
+										<h3
+											class="h-9 pb-2 pt-3 px-1 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all">
+											Today
+										</h3>
+										<Icon
+											title="Clean empty chats"
+											name="tabler:trash"
+											class="w-4 h-4 shrink-0 mr-1"
+											@click="cleanChats" />
+									</div>
+									<ol class="flex flex-col gap-2 grow">
+										<NuxtLink
+											v-for="chat of chatsList"
+											:key="chat.id"
+											:to="`/chats/${chat.id}`">
+											<Button
+												theme="gray"
+												class="w-full flex-row gap-2 !ring-dark-300 !font-normal">
 												<Icon
-													title="Clean empty chats"
+													name="tabler:messages"
+													class="w-4 h-4 shrink-0" />
+												<span
+													class="grow flex justify-start text-left whitespace-nowrap overflow-hidden text-ellipsis"
+													>{{ chat.title }}</span
+												>
+												<Icon
+													name="tabler:edit"
+													class="w-4 h-4 shrink-0 cursor:pointer" />
+												<Icon
+													title="Delete Chat"
 													name="tabler:trash"
-													class="w-4 h-4 shrink-0 mr-1"
-													@click="cleanChats" />
-											</div>
-											<ol class="flex flex-col gap-2">
-												<NuxtLink
-													v-for="chat of chatsList"
-													:key="chat.id"
-													:to="`/chats/${chat.id}`">
-													<Button
-														theme="gray"
-														class="w-full flex-row gap-2 !ring-dark-300 !font-normal">
-														<Icon
-															name="tabler:messages"
-															class="w-4 h-4 shrink-0" />
-														<span
-															class="grow flex justify-start text-left whitespace-nowrap overflow-hidden text-ellipsis"
-															>{{
-																chat.title
-															}}</span
-														>
-														<Icon
-															name="tabler:edit"
-															class="w-4 h-4 shrink-0 cursor:pointer" />
-														<Icon
-															title="Delete Chat"
-															name="tabler:trash"
-															class="w-4 h-4 shrink-0"
-															@click="
-																deleteChat(
-																	$event,
-																	chat.id
-																)
-															" />
-													</Button>
-												</NuxtLink>
-											</ol>
-										</div>
-									</span>
+													class="w-4 h-4 shrink-0"
+													@click="
+														deleteChat(
+															$event,
+															chat.id
+														)
+													" />
+											</Button>
+										</NuxtLink>
+									</ol>
 								</div>
+							</span>
+						</div>
+					</div>
+				</div>
+			</nav>
+			<div class="py-2 shrink-0 flex flex-col gap-4">
+				<NuxtLink to="/personalities" class="w-full">
+					<Button theme="gray" class="w-full">
+						<Icon
+							name="tabler:users"
+							class="h-4 w-4 mr-2" />Personalities
+					</Button>
+				</NuxtLink>
+				<NuxtLink to="/settings/user">
+					<Button
+						theme="gray"
+						name=""
+						class="flex flex-row gap-x-2 py-2 text-left w-full justify-between">
+						<div class="flex items-center">
+							<img
+								class="inline-block h-9 w-9 rounded"
+								:src="
+									user?.avatar ||
+									`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+										user.display_name
+									)}`
+								"
+								alt="" />
+							<div class="ml-3">
+								<p
+									class="text-sm font-medium text-gray-200 group-hover:text-gray-50">
+									{{ user?.display_name }}
+								</p>
+								<p
+									class="text-xs font-medium text-gray-400 group-hover:text-gray-200">
+									View profile
+								</p>
 							</div>
 						</div>
-						<div class="pt-2 empty:hidden flex flex-col gap-4">
-							<NuxtLink to="/personalities" class="w-full">
-								<Button theme="gray" class="w-full">
-									<Icon
-										name="tabler:users"
-										class="h-4 w-4 mr-2" />Personalities
-								</Button>
-							</NuxtLink>
-							<NuxtLink to="/settings/user">
-								<Button
-									theme="gray"
-									name=""
-									class="flex flex-row gap-x-2 py-2 text-left w-full justify-between">
-									<div class="flex items-center">
-										<img
-											class="inline-block h-9 w-9 rounded"
-											:src="
-												user?.avatar ||
-												`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
-													user.display_name
-												)}`
-											"
-											alt="" />
-										<div class="ml-3">
-											<p
-												class="text-sm font-medium text-gray-200 group-hover:text-gray-50">
-												{{ user?.display_name }}
-											</p>
-											<p
-												class="text-xs font-medium text-gray-400 group-hover:text-gray-200">
-												View profile
-											</p>
-										</div>
-									</div>
-								</Button>
-							</NuxtLink>
-						</div>
-					</nav>
-				</div>
+					</Button>
+				</NuxtLink>
 			</div>
 		</div>
 	</div>
