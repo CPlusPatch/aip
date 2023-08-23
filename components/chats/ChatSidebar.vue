@@ -149,7 +149,7 @@ const cleanChats = () => {
 					</div>
 				</div>
 			</nav>
-			<div class="py-2 shrink-0 flex flex-col gap-4">
+			<div class="p-2 shrink-0 flex flex-col gap-4">
 				<NuxtLink to="/personalities" class="w-full">
 					<Button theme="gray" class="w-full">
 						<Icon
