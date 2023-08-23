@@ -9,6 +9,7 @@ export default async () => {
 			workerConfig.workers.map(model => ({
 				...model,
 				occupied: false,
+				noRetryUntil: 0,
 			}))
 		)
 	);

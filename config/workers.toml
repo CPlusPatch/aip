@@ -40,7 +40,7 @@
 id = "L2-13BU-L1-001T"
 model = "L2-13BU-L1"
 uncensored = true
-address = "http://192.168.2.109:2864"
+address = "http://192.168.2.109:28647"
 tier = 1
 
 [[workers]]
