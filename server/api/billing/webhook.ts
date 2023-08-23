@@ -156,4 +156,9 @@ export default defineEventHandler(async event => {
 			break;
 		}
 	}
+
+	return {
+		status: 200,
+		message: "OK",
+	};
 });
