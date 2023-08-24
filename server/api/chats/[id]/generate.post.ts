@@ -139,7 +139,10 @@ export default defineEventHandler(async event => {
 				user.credits -= chunk.length;
 			}
 
-			if (user.credits <= 0) {
+			if (
+				![Subscriptions.PREMIUM].includes(user.subscription) &&
+				user.credits <= 0
+			) {
 				user.credits = 0;
 				throw createError({
 					statusCode: 402,
