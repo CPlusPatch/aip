@@ -5,7 +5,7 @@ import { Personality } from "~/db/entities/Personality";
 defineProps<{
 	user: User;
 	model: string;
-	personality: Personality | null;
+	personality: any | null;
 	open: boolean;
 	temperature: number;
 }>();

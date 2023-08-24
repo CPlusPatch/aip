@@ -20,7 +20,7 @@ export default defineEventHandler(async event => {
 			user: {
 				id: user.id,
 			},
-			id: Number(event.context.params?.id) ?? 0,
+			id: event.context.params?.id,
 		},
 		relations: {
 			user: true,

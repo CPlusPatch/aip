@@ -13,8 +13,8 @@ import { Personality } from "./Personality";
 
 @Entity()
 export class Chat extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
 	@Column("jsonb")
 	messages: {

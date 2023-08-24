@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { User } from "~/db/entities/User";
-
-const user = (await useFetch(`/api/user/get`)).data.value as User;
-
 const token = useCookie("token");
 
 const personalities = (
@@ -23,12 +19,13 @@ if (!personalities) {
 
 definePageMeta({
 	middleware: "auth",
+	layout: "account",
 });
 </script>
 
 <template>
 	<div
-		class="bg-dark-400 !max-h-[100dvh] max-h-screen overflow-scroll no-scrollbar w-full h-full">
+		class="bg-dark-400 !h-[100dvh] h-screen overflow-y-scroll no-scrollbar w-full h-full">
 		<header class="relative isolate pt-16 w-full bg-dark-600">
 			<div
 				class="absolute inset-0 -z-10 overflow-hidden"
@@ -104,9 +101,11 @@ definePageMeta({
 								{{ person.description }}
 							</dd>
 							<dd class="mt-4">
-								<Button theme="orange" class="w-full"
-									>Chat</Button
-								>
+								<NuxtLink :to="`/personalities/${person.id}`">
+									<Button theme="orange" class="w-full"
+										>Configure</Button
+									>
+								</NuxtLink>
 							</dd>
 						</dl>
 					</div>

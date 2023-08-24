@@ -27,6 +27,11 @@ const navigation = [
 		href: "/settings/invoice",
 		icon: "tabler:file-description",
 	},
+	{
+		name: "Personalities",
+		href: "/personalities",
+		icon: "tabler:brain",
+	},
 ];
 
 useHead({

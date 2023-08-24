@@ -14,8 +14,8 @@ import { User } from "./User";
 	name: "personalities",
 })
 export class Personality extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
 	@Column("varchar")
 	name: string;

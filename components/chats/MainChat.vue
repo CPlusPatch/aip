@@ -1,9 +1,11 @@
 <script setup lang="ts">
+// eslint-disable vue/valid-v-model
 import { nanoid } from "nanoid";
 import { Subscriptions, User } from "~/db/entities/User";
+import { Chat } from "~/db/entities/Chat";
 
 const props = defineProps<{
-	id: number;
+	id: string;
 	user: User;
 }>();
 
@@ -20,7 +22,7 @@ const isGenerating = ref(false);
 const bottomOfChatRef = ref<HTMLElement | null>(null);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-const chat = await useFetch(`/api/chats/${props.id}/`, {
+const chat = await useFetch<Chat>(`/api/chats/${props.id}`, {
 	headers: {
 		"Content-Type": "application/json",
 		Authorization: `Bearer ${token.value}`,

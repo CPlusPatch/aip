@@ -43,7 +43,7 @@ export default defineEventHandler(async event => {
 
 	const chat = await Chat.findOne({
 		where: {
-			id: Number(chatId),
+			id: chatId,
 			user: {
 				id: user.id,
 			},

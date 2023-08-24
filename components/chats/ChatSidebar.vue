@@ -17,7 +17,7 @@ const chats = await useFetch("/api/chats/", {
 
 const chatsList = ref(chats.data.value as Chat[]);
 
-const deleteChat = (e: Event, id: number) => {
+const deleteChat = (e: Event, id: string) => {
 	e.stopPropagation();
 	e.preventDefault();
 	if (confirm("Are you sure you want to delete this chat?")) {
@@ -59,7 +59,7 @@ const cleanChats = () => {
 			// If current chat has been cleaned, navigate to the latest chat
 			if (
 				chatsList.value.filter(
-					c => c.id === Number(window.location.pathname.split("/")[2])
+					c => c.id === window.location.pathname.split("/")[2]
 				).length === 0
 			) {
 				const latestChat = chatsList.value[0];
