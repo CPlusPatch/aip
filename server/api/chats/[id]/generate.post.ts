@@ -90,7 +90,7 @@ export default defineEventHandler(async event => {
 				const openai = new OpenAI({
 					apiKey: "",
 					baseURL: `${workers.workers[workerIndex].address}/v1`,
-					timeout: 5000,
+					timeout: 10000,
 					maxRetries: 1,
 				});
 

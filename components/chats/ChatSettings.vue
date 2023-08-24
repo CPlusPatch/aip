@@ -7,12 +7,14 @@ defineProps<{
 	model: string;
 	personality: Personality | null;
 	open: boolean;
+	temperature: number;
 }>();
 
 const emit = defineEmits<{
 	(event: "update:model", model: string): void;
 	(event: "update:personality", personality: Personality): void;
 	(event: "update:open", open: boolean): void;
+	(event: "update:temperature", temperature: number): void;
 }>();
 </script>
 
@@ -97,6 +99,59 @@ const emit = defineEmits<{
 																		newModel
 																	)
 															" />
+													</div>
+
+													<div>
+														<label
+															class="block text-sm font-medium leading-6 text-gray-200 mb-2"
+															>Temperature</label
+														>
+
+														<div
+															class="flex gap-2 text-sm text-gray-200 items-center">
+															<input
+																type="number"
+																class="bg-dark-800 rounded py-1 w-18 px-2"
+																:value="
+																	temperature
+																"
+																min="0.1"
+																max="0.95"
+																step="0.05"
+																@input="
+																	emit(
+																		'update:temperature',
+																		Number(
+																			(
+																				$event as any
+																			)
+																				.target
+																				.value
+																		)
+																	)
+																" />
+															<input
+																type="range"
+																min="0.1"
+																:value="
+																	temperature
+																"
+																step="0.05"
+																max="0.95"
+																class="w-full h-1 bg-gray-200 grow rounded appearance-none cursor-pointer dark:bg-gray-700 accent-orange-500"
+																@input="
+																	emit(
+																		'update:temperature',
+																		Number(
+																			(
+																				$event as any
+																			)
+																				.target
+																				.value
+																		)
+																	)
+																" />
+														</div>
 													</div>
 												</div>
 											</div>

@@ -36,6 +36,7 @@ if (!chat.data.value) {
 
 const model = ref(chat.data.value.model || "");
 const personality = ref(chat.data.value.personality || null);
+const temperature = ref(0.7);
 const messages = ref<
 	{
 		content: string;
@@ -77,6 +78,7 @@ const sendMessage = async (e: Event) => {
 				body: JSON.stringify({
 					messages: messages.value,
 					model: model.value,
+					temperature: temperature.value,
 				}),
 				headers: {
 					"Content-Type": "application/json",
@@ -227,6 +229,7 @@ const settingsOpen = ref(false);
 			v-model:model="model"
 			v-model:personality="personality"
 			v-model:open="settingsOpen"
+			v-model:temperature="temperature"
 			:user="user" />
 		<main
 			class="relative h-full w-full transition-width flex flex-col overflow-auto items-stretch flex-1">
