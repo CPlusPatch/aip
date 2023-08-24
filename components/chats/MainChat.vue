@@ -35,6 +35,7 @@ if (!chat.data.value) {
 }
 
 const model = ref(chat.data.value.model || "");
+const personality = ref(chat.data.value.personality || null);
 const messages = ref<
 	{
 		content: string;
@@ -158,7 +159,7 @@ const handleKeypress = (e: KeyboardEvent) => {
 	}
 };
 
-const updateModel = () => {
+watch(model, () => {
 	fetch(`/api/chats/${chat.data.value?.id}`, {
 		method: "PUT",
 		headers: {
@@ -173,7 +174,7 @@ const updateModel = () => {
 			alert("Error saving model");
 		}
 	});
-};
+});
 
 onMounted(() => {
 	if (textareaRef.value) {
@@ -216,10 +217,17 @@ const redact = (id: string) => {
 		}
 	});
 };
+
+const settingsOpen = ref(false);
 </script>
 
 <template>
 	<div class="flex h-full max-w-full flex-1 flex-col dark font-['Inter']">
+		<ChatsChatSettings
+			v-model:model="model"
+			v-model:personality="personality"
+			v-model:open="settingsOpen"
+			:user="user" />
 		<main
 			class="relative h-full w-full transition-width flex flex-col overflow-auto items-stretch flex-1">
 			<div class="flex-1 overflow-hidden">
@@ -242,18 +250,20 @@ const redact = (id: string) => {
 											class="w-6 h-6" />
 									</Button>
 								</div>
-								<ChatsModelSelector
-									:model="model"
-									:user="user"
-									@update:model="
-										newModel => (model = newModel)
-									"
-									@click="updateModel()" />
+
 								<div
 									class="flex flex-1 flex-grow items-center gap-1 p-1 text-gray-600 dark:text-gray-200 sm:justify-center sm:p-0">
 									<span>{{ model }}</span>
 								</div>
-								<div class="flex flex-shrink flex-row">
+								<div class="flex flex-shrink flex-row gap-2">
+									<Button
+										theme="gray"
+										class="!px-2 !py-2"
+										@click="settingsOpen = true">
+										<Icon
+											name="tabler:layout-sidebar-right-expand"
+											class="w-6 h-6" />
+									</Button>
 									<Button
 										theme="gray"
 										:class="[

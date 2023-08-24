@@ -27,18 +27,15 @@ const updateModel = (option: any) => {
 		>
 		<div class="relative">
 			<div
-				class="inline-flex divide-x divide-orange-700 rounded-md shadow-sm">
+				class="inline-flex divide-x divide-orange-700 rounded-md shadow-sm w-full">
 				<div
-					class="inline-flex items-center gap-x-1.5 rounded-l-md bg-orange-600 px-3 py-2 text-white shadow-sm">
+					class="inline-flex grow items-center gap-x-1.5 rounded-l-md bg-orange-600 px-3 py-2 text-white shadow-sm">
 					<Icon
-						name="tabler:check"
-						class="-ml-0.5 h-5 w-5 hidden md:block"
+						name="tabler:brain"
+						class="-ml-0.5 h-5 w-5"
 						aria-hidden="true" />
-					<p class="text-sm font-semibold md:block hidden">
+					<p class="text-sm">
 						{{ selected.name }}
-					</p>
-					<p class="text-sm font-semibold block md:hidden">
-						{{ selected.smallName }}
 					</p>
 				</div>
 				<HeadlessListboxButton
@@ -56,7 +53,7 @@ const updateModel = (option: any) => {
 				leave-from-class="opacity-100"
 				leave-to-class="opacity-0">
 				<HeadlessListboxOptions
-					class="absolute left-0 z-10 mt-2 bg-dark-400 w-72 origin-top-right divide-y divide-dark-200 overflow-hidden rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					class="absolute left-0 z-10 mt-2 bg-dark-200 w-72 origin-top-right divide-y divide-dark-200 overflow-hidden rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<HeadlessListboxOption
 						v-for="option in models"
 						:key="option.name"
@@ -72,7 +69,7 @@ const updateModel = (option: any) => {
 							:class="[
 								selected
 									? 'bg-orange-600'
-									: 'bg-dark-400 hover:bg-dark-500',
+									: 'bg-dark-200 hover:bg-dark-300',
 								'cursor-default duration-100 select-none text-white p-4 text-sm',
 								!option.tiers?.includes(user.subscription) &&
 									'opacity-50',
