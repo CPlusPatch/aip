@@ -154,10 +154,15 @@ onLongPress(
 				<div
 					v-if="isActionbarShown"
 					class="absolute -top-14 right-0 p-3 rounded-xl bg-dark-300 gap-2 flex flex-row items-center children:flex children:items-center text-xl">
-					<button>
-						<Icon name="tabler:clipboard" />
+					<button @click="copyText(message.content.trim())">
+						<Icon
+							:name="
+								showCopyButtonCheck
+									? 'tabler:check'
+									: 'tabler:copy'
+							" />
 					</button>
-					<button>
+					<button @click="emit('redact', message.id)">
 						<Icon name="tabler:trash" />
 					</button>
 				</div>
