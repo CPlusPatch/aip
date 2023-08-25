@@ -4,14 +4,23 @@ import { User } from "~/db/entities/User";
 
 const showCopyButtonCheck = ref(false);
 
-defineProps<{
+const props = defineProps<{
 	message: {
 		content: string;
-		role: "user" | "assistant";
+		role: "user" | "assistant" | "system";
 		id: string;
+		date: number;
 	};
+	nextMessage: {
+		content: string;
+		role: "user" | "assistant" | "system";
+		id: string;
+		date: number;
+	} | null;
 	user: User;
 }>();
+
+const messageDate = useDateFormat(props.message.date, "hh:mm");
 
 const copyText = (text: string) => {
 	navigator.clipboard.writeText(text);
@@ -24,10 +33,25 @@ const copyText = (text: string) => {
 const emit = defineEmits<{
 	(event: "redact", id: string): void;
 }>();
+
+const elementHook = ref<HTMLElement | null>(null);
+
+const isActionbarShown = ref(false);
+
+onLongPress(
+	elementHook,
+	() => {
+		isActionbarShown.value = true;
+	},
+	{
+		delay: 100,
+	}
+);
 </script>
 
 <template>
 	<div
+		v-if="false"
 		:class="[
 			'group w-full border-b dark:border-dark-50/50',
 			message.role === 'assistant' ? '!bg-dark-300' : '',
@@ -96,4 +120,104 @@ const emit = defineEmits<{
 			</div>
 		</div>
 	</div>
+	<div
+		v-else
+		class="w-full flex flex-row max-w-6xl mx-auto py-1 px-3 first-of-type:mt-10">
+		<transition
+			enter-active-class="duration-200"
+			enter-from-class="opacity-0"
+			enter-to-class="opacity-100"
+			leave-from-class="opacity-100"
+			leave-to-class="opacity-0"
+			leave-active-class="duration-200">
+			<div
+				v-if="isActionbarShown"
+				class="fixed z-50 bg-dark-800/60 inset-0 backdrop-blur-lg"
+				@mousedown="isActionbarShown = false"></div>
+		</transition>
+		<div
+			ref="elementHook"
+			:class="[
+				'max-w-80 md:max-w-120 px-4 py-2 rounded-xl text-white w-fit flex chat-tail flex-col relative gap-1',
+				message.role === 'user'
+					? 'ml-auto bg-dark-100 rounded-br-none chat-bubble-user'
+					: 'bg-orange-500 rounded-bl-none chat-bubble-assistant',
+				isActionbarShown && 'z-60',
+			]">
+			<transition
+				enter-active-class="duration-200"
+				enter-from-class="opacity-0"
+				enter-to-class="opacity-100"
+				leave-from-class="opacity-100"
+				leave-to-class="opacity-0"
+				leave-active-class="duration-200">
+				<div
+					v-if="isActionbarShown"
+					class="absolute -top-14 right-0 p-3 rounded-xl bg-dark-300 gap-2 flex flex-row items-center children:flex children:items-center text-xl">
+					<button>
+						<Icon name="tabler:clipboard" />
+					</button>
+					<button>
+						<Icon name="tabler:trash" />
+					</button>
+				</div>
+			</transition>
+			<div
+				:class="[
+					message.role === 'user' ? '' : '',
+					'text-base break-words shrink inline-block whitespace-pre-wrap',
+				]">
+				{{ message.content }}
+			</div>
+			<div class="text-xs ml-auto flex flex-row items-center gap-1">
+				<span
+					:class="
+						message.role === 'user'
+							? 'text-gray-500'
+							: 'text-gray-100'
+					"
+					>{{ messageDate }}</span
+				>
+				<Icon name="tabler:circle-check-filled" />
+			</div>
+		</div>
+	</div>
 </template>
+
+<style>
+.chat-tail.chat-bubble-user::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3csvg width='3' height='3' xmlns='http://www.w3.org/2000/svg'%3e%3cpath fill='black' d='m 0 3 L 1 3 L 3 3 C 2 3 0 1 0 0'/%3e%3c/svg%3e");
+	mask-image: url("data:image/svg+xml,%3csvg width='3' height='3' xmlns='http://www.w3.org/2000/svg'%3e%3cpath fill='black' d='m 0 3 L 1 3 L 3 3 C 2 3 0 1 0 0'/%3e%3c/svg%3e");
+	left: 99%;
+	position: absolute;
+	bottom: 0px;
+	height: 0.75rem;
+	width: 0.75rem;
+	background-color: inherit;
+	content: "";
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+
+.chat-tail.chat-bubble-assistant::before {
+	-webkit-mask-image: url("data:image/svg+xml,%3csvg width='3' height='3' xmlns='http://www.w3.org/2000/svg'%3e%3cpath fill='black' d='m 0 3 L 3 3 L 3 0 C 3 1 1 3 0 3'/%3e%3c/svg%3e");
+	mask-image: url("data:image/svg+xml,%3csvg width='3' height='3' xmlns='http://www.w3.org/2000/svg'%3e%3cpath fill='black' d='m 0 3 L 3 3 L 3 0 C 3 1 1 3 0 3'/%3e%3c/svg%3e");
+	left: -0.71rem;
+	position: absolute;
+	bottom: 0px;
+	height: 0.75rem;
+	width: 0.75rem;
+	background-color: inherit;
+	content: "";
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+}
+</style>

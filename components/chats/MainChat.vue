@@ -44,6 +44,7 @@ const messages = ref<
 		content: string;
 		role: "user" | "system" | "assistant";
 		id: string;
+		date: number;
 	}[]
 >(chat.data.value.messages);
 const error = ref<{
@@ -67,7 +68,12 @@ const sendMessage = async (e: Event) => {
 	});
 
 	// Add the message to the conversation
-	messages.value.push({ content: message.value, role: "user", id: nanoid() });
+	messages.value.push({
+		content: message.value,
+		role: "user",
+		id: nanoid(),
+		date: Date.now(),
+	});
 
 	// Clear the message & remove empty chat
 	message.value = "";
@@ -93,6 +99,7 @@ const sendMessage = async (e: Event) => {
 			content: "",
 			role: "assistant",
 			id: nanoid(),
+			date: Date.now(),
 		});
 
 		const lastMessageFromSystemIndex = messages.value.findLastIndex(
@@ -163,7 +170,7 @@ const handleKeypress = (e: KeyboardEvent) => {
 	}
 };
 
-watch(model, () => {
+watch([model, personality], () => {
 	fetch(`/api/chats/${chat.data.value?.id}`, {
 		method: "PUT",
 		headers: {
@@ -172,6 +179,7 @@ watch(model, () => {
 		},
 		body: JSON.stringify({
 			model: model.value,
+			personalityId: personality.value?.id || null,
 		}),
 	}).then(res => {
 		if (!res.ok) {
@@ -227,7 +235,7 @@ const settingsOpen = ref(false);
 
 <template>
 	<div class="flex h-full max-w-full flex-1 flex-col dark font-['Inter']">
-		<ChatsChatSettings
+		<ChatsChatSettingsPanel
 			v-model:model="model"
 			v-model:personality="personality"
 			v-model:open="settingsOpen"
@@ -291,11 +299,12 @@ const settingsOpen = ref(false);
 							</div>
 						</header>
 						<ChatsChatMessage
-							v-for="message of messages.filter(
+							v-for="(message, index) of messages.filter(
 								m => m.role !== 'system'
-							) as any"
+							)"
 							:key="message.id"
-							:message="message!"
+							:message="message"
+							:next-message="messages[index + 1] || null"
 							:user="user"
 							@redact="redact" />
 						<div

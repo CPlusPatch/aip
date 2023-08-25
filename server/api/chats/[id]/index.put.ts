@@ -2,6 +2,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { getUserByToken } from "~/utils/tokens";
 import { Chat } from "~/db/entities/Chat";
 import { models } from "~/utils/models";
+import { Personality } from "~/db/entities/Personality";
 
 export default defineEventHandler(async event => {
 	const user = await getUserByToken(
@@ -34,7 +35,13 @@ export default defineEventHandler(async event => {
 		});
 	}
 
-	let body = await readBody<Partial<Chat>>(event);
+	let body = await readBody<
+		Partial<
+			Chat & {
+				personalityId: string;
+			}
+		>
+	>(event);
 
 	// Use DOMPurify on every body attribute
 	body = Object.fromEntries(
@@ -43,10 +50,6 @@ export default defineEventHandler(async event => {
 			typeof value === "string" ? DOMPurify.sanitize(value) : value,
 		])
 	);
-
-	// Dont allow changing user via this endpoint
-	delete body.id;
-	delete body.user;
 
 	// Check if model is valid
 	if (body.model && !models.find(model => model.model === body.model)) {
@@ -75,6 +78,30 @@ export default defineEventHandler(async event => {
 		// @ts-ignore
 		chat[key] = value;
 	});
+
+	if (body.personalityId) {
+		const personality = await Personality.findOne({
+			where: {
+				id: body.personalityId,
+				creator: {
+					id: user.id,
+				},
+			},
+			relations: {
+				creator: true,
+			},
+		});
+
+		if (!personality)
+			throw createError({
+				statusCode: 404,
+				message: "Personality not found",
+			});
+
+		chat.personality = personality;
+	} else if (body.personalityId === null) {
+		chat.personality = undefined;
+	}
 
 	chat.save();
 

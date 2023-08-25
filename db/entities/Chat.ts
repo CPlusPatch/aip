@@ -21,6 +21,7 @@ export class Chat extends BaseEntity {
 		content: string;
 		role: "user" | "system" | "assistant";
 		id: string;
+		date: number;
 	}[];
 
 	@ManyToOne(() => User)

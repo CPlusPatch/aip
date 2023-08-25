@@ -78,14 +78,14 @@ const cleanChats = () => {
 	<div
 		class="dark flex-shrink-0 bg-dark-800 font-['Inter'] block md:w-[268px] w-full h-full">
 		<div
-			class="max-h-screen w-full flex flex-col overflow-hidden border-white/20">
+			class="max-h-screen w-full h-full flex flex-col overflow-hidden border-white/20">
 			<NuxtLink to="/" class="flex h-16 shrink-0 items-center px-2 mt-3">
 				<img
 					class="h-8 w-auto"
 					src="https://uden.ai/assets/img/logo/loder.png"
 					alt="Uden AI" />
 			</NuxtLink>
-			<div class="mb-1 flex flex-row gap-2 px-2 mt-3">
+			<div class="mb-1 flex flex-row gap-2 px-2 mt-3 shrink-0">
 				<NuxtLink to="/" class="w-full">
 					<Button theme="orange" class="w-full">
 						<Icon name="tabler:plus" class="h-4 w-4 mr-2" />New chat
@@ -93,58 +93,51 @@ const cleanChats = () => {
 				</NuxtLink>
 			</div>
 			<nav
-				class="overflow-y-scroll h-1/2 no-scrollbar w-full flex-col px-2 pb-2"
+				class="overflow-y-scroll grow no-scrollbar w-full flex-col px-2 pb-2"
 				aria-label="Chat history">
-				<div class="flex-col flex-1 transition-opacity duration-500">
+				<div class="flex-col h-full transition-opacity duration-500">
 					<div class="flex flex-col gap-2 pb-2 text-gray-100 text-sm">
-						<div>
-							<span>
-								<div class="relative">
-									<div
-										class="sticky bg-dark-800 top-0 z-[16] flex flex-row justify-between items-center">
-										<h3
-											class="h-9 pb-2 pt-3 px-1 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all">
-											Today
-										</h3>
+						<div class="relative">
+							<div
+								class="sticky bg-dark-800 top-0 z-[16] flex flex-row justify-between items-center">
+								<h3
+									class="h-9 pb-2 pt-3 px-1 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all">
+									Today
+								</h3>
+								<Icon
+									title="Clean empty chats"
+									name="tabler:trash"
+									class="w-4 h-4 shrink-0 mr-1"
+									@click="cleanChats" />
+							</div>
+							<ol class="flex flex-col gap-2">
+								<NuxtLink
+									v-for="chat of chatsList"
+									:key="chat.id"
+									:to="`/chats/${chat.id}`">
+									<Button
+										theme="gray"
+										class="w-full flex-row gap-2 !ring-dark-300 !font-normal">
 										<Icon
-											title="Clean empty chats"
+											name="tabler:messages"
+											class="w-4 h-4 shrink-0" />
+										<span
+											class="grow flex justify-start text-left whitespace-nowrap overflow-hidden text-ellipsis"
+											>{{ chat.title }}</span
+										>
+										<Icon
+											name="tabler:edit"
+											class="w-4 h-4 shrink-0 cursor:pointer" />
+										<Icon
+											title="Delete Chat"
 											name="tabler:trash"
-											class="w-4 h-4 shrink-0 mr-1"
-											@click="cleanChats" />
-									</div>
-									<ol class="flex flex-col gap-2 grow">
-										<NuxtLink
-											v-for="chat of chatsList"
-											:key="chat.id"
-											:to="`/chats/${chat.id}`">
-											<Button
-												theme="gray"
-												class="w-full flex-row gap-2 !ring-dark-300 !font-normal">
-												<Icon
-													name="tabler:messages"
-													class="w-4 h-4 shrink-0" />
-												<span
-													class="grow flex justify-start text-left whitespace-nowrap overflow-hidden text-ellipsis"
-													>{{ chat.title }}</span
-												>
-												<Icon
-													name="tabler:edit"
-													class="w-4 h-4 shrink-0 cursor:pointer" />
-												<Icon
-													title="Delete Chat"
-													name="tabler:trash"
-													class="w-4 h-4 shrink-0"
-													@click="
-														deleteChat(
-															$event,
-															chat.id
-														)
-													" />
-											</Button>
-										</NuxtLink>
-									</ol>
-								</div>
-							</span>
+											class="w-4 h-4 shrink-0"
+											@click="
+												deleteChat($event, chat.id)
+											" />
+									</Button>
+								</NuxtLink>
+							</ol>
 						</div>
 					</div>
 				</div>

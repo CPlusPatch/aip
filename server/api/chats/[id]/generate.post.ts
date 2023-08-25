@@ -34,6 +34,7 @@ export default defineEventHandler(async event => {
 			role: "user" | "system" | "assistant";
 			content: string;
 			id: string;
+			date: number;
 		}[];
 		temperature?: number;
 	}>(event);
@@ -157,6 +158,7 @@ export default defineEventHandler(async event => {
 			role: "assistant",
 			content: newMessage,
 			id: nanoid(),
+			date: Date.now(),
 		});
 
 		await chat.save();

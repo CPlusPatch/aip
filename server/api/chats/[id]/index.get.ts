@@ -24,6 +24,7 @@ export default defineEventHandler(async event => {
 		},
 		relations: {
 			user: true,
+			personality: true,
 		},
 	});
 

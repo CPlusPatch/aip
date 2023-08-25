@@ -2,7 +2,7 @@
 import { User } from "~/db/entities/User";
 import { Personality } from "~/db/entities/Personality";
 
-defineProps<{
+const props = defineProps<{
 	user: User;
 	model: string;
 	personality: any | null;
@@ -16,6 +16,34 @@ const emit = defineEmits<{
 	(event: "update:open", open: boolean): void;
 	(event: "update:temperature", temperature: number): void;
 }>();
+
+const token = useCookie("token");
+
+const personalities =
+	(
+		await useFetch("/api/personalities/", {
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token.value}`,
+			},
+		})
+	).data.value ?? [];
+
+const query = ref("");
+const selectedPerson = ref<Personality | null>(props.personality || null);
+const filteredPeople = computed(() =>
+	query.value === ""
+		? personalities
+		: personalities.filter(person => {
+				return person.name
+					.toLowerCase()
+					.includes(query.value.toLowerCase());
+		  })
+);
+
+watch(selectedPerson, () => {
+	emit("update:personality", selectedPerson.value as any);
+});
 </script>
 
 <template>
@@ -70,20 +98,6 @@ const emit = defineEmits<{
 												class="divide-y divide-gray-200 px-4 sm:px-6">
 												<div
 													class="space-y-6 pb-5 pt-6">
-													<!-- <div>
-														<label
-															for="project-name"
-															class="block text-sm font-medium leading-6 text-gray-200"
-															>Project name</label
-														>
-														<div class="mt-2">
-															<InputCMInput
-																id="project-name"
-																type="text"
-																name="project-name" />
-														</div>
-													</div> -->
-
 													<div>
 														<label
 															class="block text-sm font-medium leading-6 text-gray-200 mb-2"
@@ -100,6 +114,113 @@ const emit = defineEmits<{
 																	)
 															" />
 													</div>
+
+													<HeadlessCombobox
+														v-model="selectedPerson"
+														nullable
+														as="div">
+														<HeadlessComboboxLabel
+															class="block text-sm font-medium leading-6 text-gray-50"
+															>Personality</HeadlessComboboxLabel
+														>
+														<div
+															class="relative mt-2">
+															<HeadlessComboboxInput
+																class="w-full rounded-md border-0 bg-white/5 py-1.5 pl-3 pr-12 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 focus:ring-2 focus:ring-inset focus:ring-orange-500 sm:text-sm sm:leading-6"
+																:display-value="
+																	(
+																		selectedPerson: any
+																	) =>
+																		selectedPerson?.name
+																"
+																@change="
+																	query =
+																		$event
+																			.target
+																			.value
+																" />
+															<HeadlessComboboxButton
+																class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+																<Icon
+																	name="tabler:chevron-down"
+																	class="h-5 w-5 text-gray-500"
+																	aria-hidden="true" />
+															</HeadlessComboboxButton>
+
+															<transition
+																enter-active-class="transition duration-100 ease-out"
+																enter-from-class="transform scale-95 opacity-0"
+																enter-to-class="transform scale-100 opacity-100"
+																leave-active-class="transition duration-75 ease-out"
+																leave-from-class="transform scale-100 opacity-100"
+																leave-to-class="transform scale-95 opacity-0">
+																<HeadlessComboboxOptions
+																	v-if="
+																		filteredPeople.length >
+																		0
+																	"
+																	class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-dark-200 py-1 text-base shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none sm:text-sm">
+																	<HeadlessComboboxOption
+																		v-for="person in filteredPeople"
+																		:key="
+																			person.id
+																		"
+																		v-slot="{
+																			active,
+																			selected,
+																		}"
+																		:value="
+																			person
+																		"
+																		as="template">
+																		<li
+																			:class="[
+																				'relative cursor-default select-none py-2 pl-3 pr-9',
+																				active
+																					? 'bg-orange-500 text-white'
+																					: 'text-gray-200',
+																			]">
+																			<div
+																				class="flex items-center">
+																				<img
+																					:src="
+																						person.avatar
+																					"
+																					alt=""
+																					class="h-6 w-6 flex-shrink-0 rounded" />
+																				<span
+																					:class="[
+																						'ml-3 truncate',
+																						selected &&
+																							'font-semibold',
+																					]">
+																					{{
+																						person.name
+																					}}
+																				</span>
+																			</div>
+
+																			<span
+																				v-if="
+																					selected
+																				"
+																				:class="[
+																					'absolute inset-y-0 right-0 flex items-center pr-4',
+																					active
+																						? 'text-white'
+																						: 'text-orane-600',
+																				]">
+																				<Icon
+																					name="tabler:check"
+																					class="h-5 w-5"
+																					aria-hidden="true" />
+																			</span>
+																		</li>
+																	</HeadlessComboboxOption>
+																</HeadlessComboboxOptions>
+															</transition>
+														</div>
+													</HeadlessCombobox>
 
 													<div>
 														<label
