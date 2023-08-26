@@ -1,4 +1,5 @@
 import DOMPurify from "isomorphic-dompurify";
+import { nanoid } from "nanoid";
 import { getUserByToken } from "~/utils/tokens";
 import { Chat } from "~/db/entities/Chat";
 import { models } from "~/utils/models";
@@ -99,11 +100,28 @@ export default defineEventHandler(async event => {
 			});
 
 		chat.personality = personality;
+		chat.messages[0].content = `I want you to act as ${personality.name}. You are to talk using the same mannerisms as ${personality.name} would, and the same language. Do not break character and do not mention that you are an AI. You may put actions in **asterisks** and thoughts in _underscores_. You may also use Markdown formatting.`;
+		// Insert a message by the personality in second place
+		chat.messages = [
+			...chat.messages.slice(0, 1),
+			{
+				content: personality.description,
+				id: nanoid(),
+				role: "assistant",
+				date: Date.now(),
+			},
+			...chat.messages.slice(1),
+		];
 	} else if (body.personalityId === null) {
 		chat.personality = undefined;
+
+		chat.messages[0].content =
+			"You are a helpful, respectful and honest assistant. Your name is ChatAIP. You were created by Uden AI to serve as an AI assistant. Always answer as helpfully as possible. Your answers should not include any racist, sexist, toxic or transphobic content. Try to behave like a human would, use slang, emojis and casual speak, but be formal if the user demands it. Please use proper whitespace and proper Markdown formatting. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.";
 	}
 
 	chat.save();
 
-	return true;
+	return {
+		messages: chat.messages,
+	};
 });

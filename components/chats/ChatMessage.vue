@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { marked } from "marked";
+import { markedHighlight } from "marked-highlight";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark.css";
 import { User } from "~/db/entities/User";
 
 const showCopyButtonCheck = ref(false);
@@ -17,6 +20,7 @@ const props = defineProps<{
 		id: string;
 		date: number;
 	} | null;
+	roleplayMode: boolean;
 	user: User;
 }>();
 
@@ -47,11 +51,29 @@ onLongPress(
 		delay: 100,
 	}
 );
+
+marked.use(
+	markedHighlight({
+		highlight: (code, lang) => {
+			if (code.includes('class="hljs')) return code;
+			const language = hljs.getLanguage(lang) ? lang : "plaintext";
+			return hljs.highlight(code, { language }).value;
+		},
+		langPrefix: "hljs language-",
+	})
+);
+
+const markdown = computed(() =>
+	marked(props.message.content.trim(), {
+		headerIds: false,
+		mangle: false,
+	})
+);
 </script>
 
 <template>
 	<div
-		v-if="false"
+		v-if="!roleplayMode"
 		:class="[
 			'group w-full border-b dark:border-dark-50/50',
 			message.role === 'assistant' ? '!bg-dark-300' : '',
@@ -87,12 +109,7 @@ onLongPress(
 						class="min-h-[20px] flex flex-col items-start gap-3 overflow-x-auto whitespace-pre-wrap break-words">
 						<div
 							class="empty:hidden text-gray-200 prose"
-							v-html="
-								marked(message.content.trim(), {
-									headerIds: false,
-									mangle: false,
-								})
-							"></div>
+							v-html="markdown"></div>
 					</div>
 				</div>
 				<div
@@ -171,9 +188,13 @@ onLongPress(
 				:class="[
 					message.role === 'user' ? '' : '',
 					'text-base break-words shrink inline-block whitespace-pre-wrap',
-				]">
-				{{ message.content }}
-			</div>
+				]"
+				v-html="
+					marked(message.content.trim(), {
+						headerIds: false,
+						mangle: false,
+					})
+				"></div>
 			<div class="text-xs ml-auto flex flex-row items-center gap-1">
 				<span
 					:class="
@@ -190,6 +211,15 @@ onLongPress(
 </template>
 
 <style>
+pre {
+	padding: 0px !important;
+	padding-bottom: 1.25rem !important;
+}
+
+pre code {
+	border-radius: 5px;
+}
+
 .chat-tail.chat-bubble-user::before {
 	-webkit-mask-image: url("data:image/svg+xml,%3csvg width='3' height='3' xmlns='http://www.w3.org/2000/svg'%3e%3cpath fill='black' d='m 0 3 L 1 3 L 3 3 C 2 3 0 1 0 0'/%3e%3c/svg%3e");
 	mask-image: url("data:image/svg+xml,%3csvg width='3' height='3' xmlns='http://www.w3.org/2000/svg'%3e%3cpath fill='black' d='m 0 3 L 1 3 L 3 3 C 2 3 0 1 0 0'/%3e%3c/svg%3e");

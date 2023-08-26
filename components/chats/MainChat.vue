@@ -181,9 +181,10 @@ watch([model, personality], () => {
 			model: model.value,
 			personalityId: personality.value?.id || null,
 		}),
-	}).then(res => {
+	}).then(async res => {
 		if (!res.ok) {
 			alert("Error saving model");
+			messages.value = (await res.json()).messages;
 		}
 	});
 });
@@ -304,6 +305,7 @@ const settingsOpen = ref(false);
 							)"
 							:key="message.id"
 							:message="message"
+							:roleplay-mode="!!(personality || false)"
 							:next-message="messages[index + 1] || null"
 							:user="user"
 							@redact="redact" />
