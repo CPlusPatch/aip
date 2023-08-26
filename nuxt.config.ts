@@ -51,6 +51,7 @@ export default defineNuxtConfig({
 		},
 		esbuild: {
 			options: {
+				target: "esnext",
 				tsconfigRaw: {
 					compilerOptions: {
 						experimentalDecorators: true,

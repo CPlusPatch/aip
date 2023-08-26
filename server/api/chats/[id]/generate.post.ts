@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 // eslint-disable-next-line import/no-named-as-default
 import OpenAI from "openai";
-import { Stream } from "openai/streaming";
+import type { Stream } from "openai/streaming";
 import { Subscriptions } from "~/db/entities/User";
 import { Chat } from "~/db/entities/Chat";
 import { getUserByToken } from "~/utils/tokens";
@@ -93,6 +93,7 @@ export default defineEventHandler(async event => {
 					baseURL: `${workers.workers[workerIndex].address}/v1`,
 					timeout: 10000,
 					maxRetries: 1,
+					fetch: fetch,
 				});
 
 				console.log("Generating answer...");
