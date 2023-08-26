@@ -40,7 +40,7 @@ dependencies:
     version: 4.0.2
   node-llama-cpp:
     specifier: ''
-    version: 1.1.1
+    version: 2.0.0
   nuxt-icon:
     specifier: ^0.4.1
     version: 0.4.1(vue@3.3.4)
@@ -2769,7 +2769,7 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 18.17.5
+      '@types/node': 18.17.11
     dev: false
 
   /@types/btoa-lite@1.0.0:
@@ -2808,7 +2808,7 @@ packages:
   /@types/express-serve-static-core@4.17.35:
     resolution: {integrity: sha512-wALWQwrgiB2AWTT91CB62b6Yt0sNHpznUXeZEcnPU3DRdlDIz74x8Qg1UUYKSVFi+va5vKOLYRBI1bRKiLLKIg==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 18.17.11
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
       '@types/send': 0.17.1
@@ -2830,7 +2830,7 @@ packages:
   /@types/http-proxy@1.17.11:
     resolution: {integrity: sha512-HC8G7c1WmaF2ekqpnFq626xd3Zz0uvaqFmBJNRZCGEZCXkvSdJoNFn/8Ygbd9fKNQj8UzLdCETaI0UWPAjK7IA==}
     dependencies:
-      '@types/node': 18.17.5
+      '@types/node': 18.17.11
     dev: true
 
   /@types/json-schema@7.0.12:
@@ -2844,7 +2844,7 @@ packages:
   /@types/jsonwebtoken@9.0.2:
     resolution: {integrity: sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==}
     dependencies:
-      '@types/node': 18.16.18
+      '@types/node': 18.17.11
     dev: false
 
   /@types/marked@5.0.0:
@@ -2874,6 +2874,7 @@ packages:
 
   /@types/node@18.17.5:
     resolution: {integrity: sha512-xNbS75FxH6P4UXTPUJp/zNPq6/xsfdJKussCWNOnz4aULWIRwMgP1LgaB5RiBnMX1DPCYenuqGZfnIAx5mbFLA==}
+    dev: false
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -2907,7 +2908,7 @@ packages:
     dependencies:
       '@types/http-errors': 2.0.1
       '@types/mime': 3.0.1
-      '@types/node': 18.17.5
+      '@types/node': 18.17.11
     dev: false
 
   /@types/trusted-types@2.0.3:
@@ -7776,8 +7777,8 @@ packages:
       - supports-color
     dev: false
 
-  /node-llama-cpp@1.1.1:
-    resolution: {integrity: sha512-bJEfOoI12doHfeeZDtRTavGdYPvJO9RKEvj8uHQgg1kDpNk6TEJwwx5uVRYlCRXIhiDBsa8m/uixPtwO4rOzng==}
+  /node-llama-cpp@2.0.0:
+    resolution: {integrity: sha512-4kGvKXzvtdnUEuHiwYTG3zD5kM2PINdgtcvP1O0/iYYz2hiObrLcd/a4KakPDCRVH/pc3yAnxojPNTlN0RJtBw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     requiresBuild: true
