@@ -44,7 +44,7 @@
     "marked-highlight": "^2.0.4",
     "nanoid": "^4.0.2",
     "node-llama-cpp": "",
-    "nuxt-icon": "^0.4.1",
+    "nuxt-icon": "^0.5.0",
     "oidc-client-ts": "^2.2.4",
     "openai": "4.2.0",
     "pg": "^8.11.3",
