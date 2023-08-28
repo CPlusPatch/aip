@@ -30,7 +30,7 @@ export default {
 		<div
 			v-if="icon"
 			:class="[
-				'absolute left-2 inset-y-0 flex items-center -translate-x-7 duration-200',
+				'absolute left-8.5 inset-y-0 flex items-center -translate-x-7 duration-200',
 				props.hideIcon ? 'peer-focus:translate-x-0' : 'translate-x-0',
 			]">
 			<Icon :name="icon" class="w-5 h-5 text-gray-400" />
