@@ -62,15 +62,15 @@ export class Client {
 	}
 
 	getChats() {
-		return this.get<Chat[]>("/chats", undefined, undefined);
+		return this.get<Chat[]>("/api/chats", undefined, undefined);
 	}
 
 	getChat(id: string) {
-		return this.get<Chat>(`/chats/${id}`, undefined, undefined);
+		return this.get<Chat>(`/api/chats/${id}`, undefined, undefined);
 	}
 
 	createChat(data: { model: string; personalityId?: string }) {
-		return this.post<Chat>("/chats", data, undefined);
+		return this.post<Chat>("/api/chats", data, undefined);
 	}
 
 	/**
@@ -87,7 +87,7 @@ export class Client {
 		}
 	) {
 		return this.post(
-			`/chats/${id}/generate`,
+			`/api/chats/${id}/generate`,
 			data,
 			undefined,
 			true
@@ -95,7 +95,7 @@ export class Client {
 	}
 
 	deleteChat(id: string) {
-		return this.delete<Chat>(`/chats/${id}`, undefined, undefined);
+		return this.delete<Chat>(`/api/chats/${id}`, undefined, undefined);
 	}
 
 	updateChat(
@@ -107,20 +107,24 @@ export class Client {
 			messages?: Message[];
 		}
 	) {
-		return this.put<Chat>(`/chats/${id}`, data, undefined);
+		return this.put<Chat>(`/api/chats/${id}`, data, undefined);
 	}
 
 	cleanChats() {
-		return this.post<Chat[]>("/chats/clean", undefined, undefined);
+		return this.post<Chat[]>("/api/chats/clean", undefined, undefined);
 	}
 
 	getPersonalities() {
-		return this.get<Personality[]>("/personalities", undefined, undefined);
+		return this.get<Personality[]>(
+			"/api/personalities",
+			undefined,
+			undefined
+		);
 	}
 
 	getPersonality(id: string) {
 		return this.get<Personality>(
-			`/personalities/${id}`,
+			`/api/personalities/${id}`,
 			undefined,
 			undefined
 		);
@@ -131,7 +135,7 @@ export class Client {
 		prompt: string;
 		description: string;
 	}) {
-		return this.post<Personality>("/personalities", data, undefined);
+		return this.post<Personality>("/api/personalities", data, undefined);
 	}
 
 	updatePersonality(
@@ -143,12 +147,16 @@ export class Client {
 			avatar?: string;
 		}
 	) {
-		return this.put<Personality>(`/personalities/${id}`, data, undefined);
+		return this.put<Personality>(
+			`/api/personalities/${id}`,
+			data,
+			undefined
+		);
 	}
 
 	deletePersonality(id: string) {
 		return this.delete<Personality>(
-			`/personalities/${id}`,
+			`/api/personalities/${id}`,
 			undefined,
 			undefined
 		);
