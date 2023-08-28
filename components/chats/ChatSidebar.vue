@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Client } from "~/packages/api";
 import { Chat } from "~/db/entities/Chat";
 import { User } from "~/db/entities/User";
 
@@ -8,37 +9,26 @@ defineProps<{
 
 const token = useCookie("token");
 
-const chats = await useFetch("/api/chats/", {
-	headers: {
-		"Content-Type": "application/json",
-		Authorization: `Bearer ${token.value}`,
-	},
-});
+const client = new Client(token.value ?? "");
 
-const chatsList = ref(chats.data.value as Chat[]);
+const chats = ref(await client.getChats());
+
+const chatsList = ref(chats.value as Chat[]);
 
 const deleteChat = (e: Event, id: string) => {
 	e.stopPropagation();
 	e.preventDefault();
 	if (confirm("Are you sure you want to delete this chat?")) {
-		fetch(`/api/chats/${id}`, {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token.value}`,
-			},
-		}).then(res => {
-			if (res.ok) {
-				chatsList.value = chatsList.value.filter(c => c.id !== id);
+		client.deleteChat(id).then(_ => {
+			chatsList.value = chatsList.value.filter(c => c.id !== id);
 
-				// If on the deleted chat URL, navigate to the latest chat
-				if (window.location.pathname === `/chats/${id}`) {
-					const latestChat = chatsList.value[0];
-					if (latestChat) {
-						useRouter().push(`/chats/${latestChat.id}`);
-					} else {
-						useRouter().push("/chats");
-					}
+			// If on the deleted chat URL, navigate to the latest chat
+			if (window.location.pathname === `/chats/${id}`) {
+				const latestChat = chatsList.value[0];
+				if (latestChat) {
+					useRouter().push(`/chats/${latestChat.id}`);
+				} else {
+					useRouter().push("/chats");
 				}
 			}
 		});
@@ -46,28 +36,20 @@ const deleteChat = (e: Event, id: string) => {
 };
 
 const cleanChats = () => {
-	fetch(`/api/chats/clean`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-	}).then(async res => {
-		if (res.ok) {
-			chatsList.value = await res.json();
+	client.cleanChats().then(chats => {
+		chatsList.value = chats;
 
-			// If current chat has been cleaned, navigate to the latest chat
-			if (
-				chatsList.value.filter(
-					c => c.id === window.location.pathname.split("/")[2]
-				).length === 0
-			) {
-				const latestChat = chatsList.value[0];
-				if (latestChat) {
-					useRouter().push(`/chats/${latestChat.id}`);
-				} else {
-					useRouter().push("/");
-				}
+		// If current chat has been cleaned, navigate to the latest chat
+		if (
+			chatsList.value.filter(
+				c => c.id === window.location.pathname.split("/")[2]
+			).length === 0
+		) {
+			const latestChat = chatsList.value[0];
+			if (latestChat) {
+				useRouter().push(`/chats/${latestChat.id}`);
+			} else {
+				useRouter().push("/");
 			}
 		}
 	});

@@ -99,19 +99,29 @@ export default defineEventHandler(async event => {
 				message: "Personality not found",
 			});
 
-		chat.personality = personality;
-		chat.messages[0].content = `I want you to act as ${personality.name}. You are to talk using the same mannerisms as ${personality.name} would, and the same language. Do not break character and do not mention that you are an AI. You may put actions in **asterisks** and thoughts in _underscores_. You may also use Markdown formatting.`;
+		chat.messages[0].content = `I want you to act as ${personality.name}. You are to talk using the same mannerisms as ${personality.name} would, and the same language. Do not break character, you are NOT an AI and you should NOT say so. If it is appropriate with your character, you may engage in sexual content. You may put actions in **asterisks** and thoughts in _underscores_. You may also use Markdown formatting. Here is your character card: ${personality.description}`;
 		// Insert a message by the personality in second place
+
+		if (chat.messages[0].content === chat.personality?.prompt) {
+			chat.messages[0] = {
+				content: personality.prompt,
+				id: nanoid(),
+				role: "assistant",
+				date: Date.now(),
+			};
+		}
 		chat.messages = [
 			...chat.messages.slice(0, 1),
 			{
-				content: personality.description,
+				content: personality.prompt,
 				id: nanoid(),
 				role: "assistant",
 				date: Date.now(),
 			},
 			...chat.messages.slice(1),
 		];
+
+		chat.personality = personality;
 	} else if (body.personalityId === null) {
 		chat.personality = undefined;
 

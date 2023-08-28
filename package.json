@@ -52,7 +52,8 @@
     "stripe-event-types": "^2.4.0",
     "typeorm": "0.3.17",
     "uuid": "^9.0.0",
-    "webp-converter-browser": "^1.0.4"
+    "webp-converter-browser": "^1.0.4",
+	"api": "*"
   },
   "overrides": {
     "rollup": "3.20.3-0"

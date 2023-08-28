@@ -32,7 +32,7 @@ export default defineEventHandler(async event => {
 		return chat;
 	} else {
 		throw createError({
-			statusCode: 500,
+			statusCode: 404,
 		});
 	}
 });

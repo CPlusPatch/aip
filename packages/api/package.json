@@ -1,0 +1,27 @@
+{
+    "name": "@aip/api",
+    "version": "0.0.1",
+    "description": "API for the AIP project",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Jesse Wierzbinski",
+    "keywords": [
+        "api",
+        "typescript",
+        "ai",
+        "esm"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/uden-ai/aip.git",
+        "directory": "packages/api"
+    },
+    "homepage": "https://github.com/uden-ai/aip",
+    "bugs": "https://github.com/Uden-AI/aip/issues",
+    "license": "GPL-3.0"
+}

@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "esnext",
+		"declaration": true,
+		"outDir": "./",
+		"strict": true,
+		"esModuleInterop": true
+	},
+	"include": ["./**/*.ts"],
+	"exclude": ["node_modules"]
+}

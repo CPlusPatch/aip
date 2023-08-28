@@ -27,7 +27,7 @@ export default defineEventHandler(async event => {
 	});
 
 	if (chat && (await chat.remove())) {
-		return true;
+		return chat;
 	} else {
 		throw createError({
 			statusCode: 500,

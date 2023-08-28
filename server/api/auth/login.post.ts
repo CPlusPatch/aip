@@ -5,7 +5,7 @@ import { createPasswordHash } from "~/utils/passwords";
 
 export default defineEventHandler(async event => {
 	const body: {
-		username?: string;
+		username: string;
 		password: string;
 	} = await readBody(event);
 

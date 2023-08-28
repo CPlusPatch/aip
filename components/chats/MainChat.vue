@@ -2,7 +2,7 @@
 // eslint-disable vue/valid-v-model
 import { nanoid } from "nanoid";
 import { Subscriptions, User } from "~/db/entities/User";
-import { Chat } from "~/db/entities/Chat";
+import { Client } from "~/packages/api";
 
 const props = defineProps<{
 	id: string;
@@ -22,37 +22,28 @@ const isGenerating = ref(false);
 const bottomOfChatRef = ref<HTMLElement | null>(null);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-const chat = await useFetch<Chat>(`/api/chats/${props.id}`, {
-	headers: {
-		"Content-Type": "application/json",
-		Authorization: `Bearer ${token.value}`,
-	},
-});
+const client = new Client(token.value ?? "");
 
-if (!chat.data.value) {
+const chat = ref(await client.getChat(props.id));
+
+if (!chat.value) {
 	throw createError({
 		statusCode: 404,
 		message: "Chat not found",
 	});
 }
 
-const model = ref(chat.data.value.model || "");
-const personality = ref(chat.data.value.personality || null);
+const model = ref(chat.value.model || "");
+const personality = ref(chat.value.personality || null);
 const temperature = ref(0.7);
-const messages = ref<
-	{
-		content: string;
-		role: "user" | "system" | "assistant";
-		id: string;
-		date: number;
-	}[]
->(chat.data.value.messages);
+const messages = ref(chat.value.messages);
+
 const error = ref<{
 	statusCode: number;
 	message: string;
 } | null>(null);
 
-const sendMessage = async (e: Event) => {
+const sendMessage = (e: Event) => {
 	e.preventDefault();
 
 	// Don't send empty messages
@@ -79,84 +70,79 @@ const sendMessage = async (e: Event) => {
 	message.value = "";
 
 	try {
-		const response = await fetch(
-			`/api/chats/${chat.data.value?.id}/generate`,
-			{
-				method: "POST",
-				body: JSON.stringify({
-					messages: messages.value,
-					model: model.value,
-					temperature: temperature.value,
-				}),
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token.value}`,
-				},
-			}
-		);
+		client
+			.generateChat(chat.value.id, {
+				messages: messages.value,
+				temperature: temperature.value,
+			})
+			.then(async chat => {
+				messages.value.push({
+					content: "",
+					role: "assistant",
+					id: nanoid(),
+					date: Date.now(),
+				});
 
-		messages.value.push({
-			content: "",
-			role: "assistant",
-			id: nanoid(),
-			date: Date.now(),
-		});
+				const lastMessageFromSystemIndex = messages.value.findLastIndex(
+					message => message.role === "assistant"
+				);
 
-		const lastMessageFromSystemIndex = messages.value.findLastIndex(
-			message => message.role === "assistant"
-		);
+				isGenerating.value = true;
 
-		if (!response.ok) {
-			error.value = await response.json();
-			isLoading.value = false;
-			return;
-		}
+				bottomOfChatRef?.value?.scrollIntoView({
+					behavior: "smooth",
+				});
 
-		isGenerating.value = true;
+				// Read stream from body and add the outputs to the last system message
+				const reader = chat.body?.getReader();
+				if (reader) {
+					let result = await reader.read();
+					while (!result.done) {
+						if (isLoading.value) isLoading.value = false;
+						if (!isGenerating.value) {
+							await reader.cancel();
+							break;
+						}
+						const decoder = new TextDecoder();
+						const chunk = decoder.decode(result.value, {
+							stream: true,
+						});
+						credits.value -= chunk.length;
+						if (credits.value < 0) {
+							credits.value = 0;
+						}
+						messages.value[lastMessageFromSystemIndex].content +=
+							chunk;
+						// If the message begins with a newline, remove it:
+						if (
+							messages.value[lastMessageFromSystemIndex]
+								.content[0] === "\n"
+						) {
+							messages.value[lastMessageFromSystemIndex].content =
+								messages.value[
+									lastMessageFromSystemIndex
+								].content
+									.slice(1)
+									.trim();
+						}
 
-		bottomOfChatRef?.value?.scrollIntoView({
-			behavior: "smooth",
-		});
-
-		// Read stream from body and add the outputs to the last system message
-		const reader = response.body?.getReader();
-		if (reader) {
-			let result = await reader.read();
-			while (!result.done) {
-				if (isLoading.value) isLoading.value = false;
-				if (!isGenerating.value) {
-					await reader.cancel();
-					break;
+						result = await reader.read();
+					}
+					// Add the last chunk
+					const decoder = new TextDecoder();
+					const chunk = decoder.decode(result.value, {
+						stream: true,
+					});
+					messages.value[lastMessageFromSystemIndex].content += chunk;
 				}
-				const decoder = new TextDecoder();
-				const chunk = decoder.decode(result.value, { stream: true });
-				credits.value -= chunk.length;
-				if (credits.value < 0) {
-					credits.value = 0;
-				}
-				messages.value[lastMessageFromSystemIndex].content += chunk;
-				// If the message begins with a newline, remove it:
-				if (
-					messages.value[lastMessageFromSystemIndex].content[0] ===
-					"\n"
-				) {
-					messages.value[lastMessageFromSystemIndex].content =
-						messages.value[lastMessageFromSystemIndex].content
-							.slice(1)
-							.trim();
-				}
 
-				result = await reader.read();
-			}
-			// Add the last chunk
-			const decoder = new TextDecoder();
-			const chunk = decoder.decode(result.value, { stream: true });
-			messages.value[lastMessageFromSystemIndex].content += chunk;
-		}
+				isGenerating.value = false;
 
-		isGenerating.value = false;
-
-		console.log(messages.value);
+				console.log(messages.value);
+			})
+			.catch(err => {
+				error.value = err;
+			});
 	} catch (error: any) {
 		console.error(error);
 	}
@@ -171,22 +157,14 @@ const handleKeypress = (e: KeyboardEvent) => {
 };
 
 watch([model, personality], () => {
-	fetch(`/api/chats/${chat.data.value?.id}`, {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-		body: JSON.stringify({
+	client
+		.updateChat(chat.value.id, {
 			model: model.value,
-			personalityId: personality.value?.id || null,
-		}),
-	}).then(async res => {
-		if (!res.ok) {
-			alert("Error saving model");
-			messages.value = (await res.json()).messages;
-		}
-	});
+			personalityId: personality.value?.id,
+		})
+		.then(res => {
+			messages.value = res.messages;
+		});
 });
 
 onMounted(() => {
@@ -215,20 +193,13 @@ const redact = (id: string) => {
 	const index = messages.value.findIndex(m => m.id === id);
 	messages.value.splice(index, 1);
 
-	fetch(`/api/chats/${chat.data.value?.id}`, {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-		body: JSON.stringify({
+	client
+		.updateChat(chat.value.id, {
 			messages: messages.value,
-		}),
-	}).then(res => {
-		if (!res.ok) {
-			alert("Error redacting message");
-		}
-	});
+		})
+		.catch(err => {
+			console.error(err);
+		});
 };
 
 const settingsOpen = ref(false);

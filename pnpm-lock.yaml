@@ -14,6 +14,9 @@ dependencies:
   '@nuxtjs/robots':
     specifier: ^3.0.0
     version: 3.0.0
+  api:
+    specifier: '*'
+    version: 0.0.0
   emailjs:
     specifier: ^4.0.2
     version: 4.0.2(typescript@5.2.2)
@@ -101,7 +104,7 @@ devDependencies:
     specifier: ^5.0.0
     version: 5.0.0(eslint-config-prettier@9.0.0)(eslint@8.48.0)(prettier@3.0.2)
   nuxt:
-    specifier: ^3.6.2
+    specifier: 3.6.2
     version: 3.6.2(@types/node@20.5.6)(eslint@8.48.0)(typescript@5.2.2)
   nuxt-headlessui:
     specifier: ^1.1.4
@@ -1961,6 +1964,7 @@ packages:
       - '@types/node'
       - eslint
       - less
+      - lightningcss
       - meow
       - optionator
       - rollup
@@ -3751,6 +3755,12 @@ packages:
     dependencies:
       normalize-path: 3.0.0
       picomatch: 2.3.1
+
+  /api@0.0.0:
+    resolution: {integrity: sha512-68agM4qJjkqxaJ4d5FmOErl4/vl/7ZvgDaKZk8BjyNr3YQCaS87AVGF1HcdX5UFJpp+yeoR6mlpvIDbG/vRhUQ==}
+    engines: {node: '>=0.4.0'}
+    deprecated: API version in package not supported. Update to 0.10.0 or later
+    dev: false
 
   /app-root-path@3.1.0:
     resolution: {integrity: sha512-biN3PwB2gUtjaYy/isrU3aNWI5w+fAfvHkSvCKeQGxhmYpwKFUxudR3Yya+KqVRHBmEDYh+/lTozYCFbmzX4nA==}
@@ -7487,6 +7497,7 @@ packages:
       - eslint
       - idb-keyval
       - less
+      - lightningcss
       - meow
       - optionator
       - rollup
@@ -9659,10 +9670,11 @@ packages:
       mlly: 1.4.1
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 4.3.9(@types/node@20.5.6)
+      vite: 4.4.9(@types/node@20.5.6)
     transitivePeerDependencies:
       - '@types/node'
       - less
+      - lightningcss
       - sass
       - stylus
       - sugarss

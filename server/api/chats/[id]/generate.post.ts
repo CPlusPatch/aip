@@ -93,7 +93,7 @@ export default defineEventHandler(async event => {
 					baseURL: `${workers.workers[workerIndex].address}/v1`,
 					timeout: 10000,
 					maxRetries: 1,
-					fetch: fetch,
+					fetch,
 				});
 
 				console.log("Generating answer...");
@@ -168,6 +168,8 @@ export default defineEventHandler(async event => {
 	} finally {
 		// Get new changes
 		workers = new Workers();
+
+		console.log(user.subscription);
 
 		await user.save();
 

@@ -40,12 +40,7 @@ export default defineEventHandler(async event => {
 
 	if (chats) {
 		// Remove all deleted chats from chat
-		return chats
-			.filter(chat => !toBeDeleted.includes(chat))
-			.map(c => ({
-				...c,
-				password: "",
-			}));
+		return chats.filter(chat => !toBeDeleted.includes(chat));
 	} else {
 		throw createError({
 			statusCode: 500,

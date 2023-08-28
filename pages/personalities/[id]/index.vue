@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { arrayBufferToWebP } from "webp-converter-browser";
+import { Client } from "~/packages/api";
 
 const token = useCookie("token");
 const loading = ref(false);
 const isUploading = ref(false);
 
-const personality = (
-	await useFetch(`/api/personalities/${useRoute().params.id}`, {
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-	})
-).data.value;
-
+const client = new Client(token.value ?? "");
+const personality = await client.getPersonality(
+	(useRoute().params.id as string) ?? ""
+);
 if (!personality) {
 	throw createError({
 		statusCode: 404,
@@ -36,23 +32,16 @@ watch([name, description, prompt], () => {
 
 const save = () => {
 	loading.value = true;
-	fetch(`/api/personalities/${useRoute().params.id}`, {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-		body: JSON.stringify({
+
+	client
+		.updatePersonality(useRoute().params.id as string, {
 			name: name.value,
 			description: description.value,
 			prompt: prompt.value,
 			avatar: avatar.value,
-		}),
-	})
-		.then(res => {
-			if (!res.ok) {
-				alert(`An error occured while saving: ${res.statusText}`);
-			}
+		})
+		.catch(err => {
+			alert(`An error occured while saving: ${err}`);
 		})
 		.finally(() => {
 			loading.value = false;
@@ -119,16 +108,16 @@ definePageMeta({
 	<div
 		class="bg-dark-400 !max-h-[100dvh] max-h-screen overflow-scroll no-scrollbar w-full h-screen overflow-y-scroll">
 		<header
-			class="flex items-center justify-center w-full bg-dark-600 h-80 overflow-hidden">
+			class="flex items-center justify-center w-full bg-dark-600 h-40 overflow-hidden">
 			<img
 				class="object-cover w-full h-full"
 				src="https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" />
 		</header>
-		<div class="mx-auto max-w-6xl px-4">
+		<div class="mx-auto max-w-4xl px-4">
 			<div class="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
 				<div class="flex">
 					<div
-						class="mt-2 ring-1 ring-dark-300 flex items-center justify-center gap-x-3 relative flex-none bg-gray-800 overflow-hidden group h-24 w-24 rounded ring-4 ring-orange-500 sm:h-32 sm:w-32">
+						class="mt-2 ring-2 ring-dark-300 flex items-center justify-center gap-x-3 relative flex-none bg-gray-800 overflow-hidden group h-24 w-24 rounded sm:h-32 sm:w-32">
 						<input
 							accept="image/*"
 							type="file"
@@ -203,29 +192,29 @@ definePageMeta({
 				</div>
 			</div>
 
-			<div class="mt-2">
+			<div class="mt-4">
 				<label class="block text-sm font-medium leading-6 text-gray-200"
-					>Description</label
+					>What should the character's first message be?</label
 				>
 				<div class="mt-2">
 					<InputCMInput
-						:value="description"
+						:value="prompt"
 						:loading="loading"
 						name=""
-						@input="description = ($event as any).target.value" />
+						@input="prompt = ($event as any).target.value" />
 				</div>
 			</div>
 
-			<div class="mt-2">
+			<div class="mt-4">
 				<label class="block text-sm font-medium leading-6 text-gray-200"
-					>Personality Prompt</label
+					>How would the character describe themselves?</label
 				>
 				<div class="mt-2">
 					<textarea
-						v-model="prompt"
+						v-model="description"
 						:disabled="loading"
 						rows="6"
-						placeholder="You are a whimsical fairy named Timerly that lives in an enchanted forest. Your favourite activities are reading, writing books and collecting silly objects like broom handles or plungers."
+						placeholder="A whimsical fairy named Timerly that lives in an enchanted forest. Its favourite activities are reading, writing books and collecting silly objects like broom handles or plungers."
 						class="block w-full disabled:opacity-50 rounded-md bg-white/5 px-4 border-0 py-3 no-scrollbar text-gray-100 shadow-sm ring-1 ring-inset ring-dark-100 outline-none focus:outline-none placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-orange-500 duration-200 sm:text-sm sm:leading-6" />
 				</div>
 			</div>

@@ -1,14 +1,10 @@
 <script setup lang="ts">
+import { Client } from "~/packages/api";
 const token = useCookie("token");
 
-const personalities = (
-	await useFetch("/api/personalities/", {
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-	})
-).data.value;
+const client = new Client(token.value ?? "");
+
+const personalities = ref(await client.getPersonalities());
 
 if (!personalities) {
 	throw createError({
@@ -21,93 +17,95 @@ definePageMeta({
 	middleware: "auth",
 	layout: "account",
 });
+
+const newPersonality = async () => {
+	const personality = await client.createPersonality({
+		name: "Joe Biden",
+		description: "Joe Biden is the 46th president of the United States.",
+		prompt: "Hey, I'm Joe Biden, the 46th president of the United States.",
+	});
+
+	navigateTo(`/personalities/${personality.id}`);
+};
 </script>
 
 <template>
 	<div
 		class="bg-dark-400 !h-[100dvh] h-screen overflow-y-scroll no-scrollbar w-full h-full">
-		<header class="relative isolate pt-16 w-full bg-dark-600">
-			<div
-				class="absolute inset-0 -z-10 overflow-hidden"
-				aria-hidden="true">
-				<div
-					class="absolute left-16 top-full -mt-16 transform-gpu opacity-50 blur-3xl xl:left-1/2 xl:-ml-80">
+		<div class="bg-dark-800">
+			<header
+				class="lg:flex lg:items-center lg:justify-between py-20 px-6 max-w-7xl mx-auto">
+				<div class="min-w-0 flex-1">
+					<h2
+						class="text-2xl font-bold leading-7 text-gray-50 sm:truncate sm:text-3xl sm:tracking-tight">
+						Personalities
+					</h2>
 					<div
-						class="aspect-[1154/678] w-[72.125rem] bg-gradient-to-br from-orange-500 to-red-600"
-						style="
-							clip-path: polygon(
-								100% 38.5%,
-								82.6% 100%,
-								60.2% 37.7%,
-								52.4% 32.1%,
-								47.5% 41.8%,
-								45.2% 65.6%,
-								27.5% 23.4%,
-								0.1% 35.3%,
-								17.9% 0%,
-								27.7% 23.4%,
-								76.2% 2.5%,
-								74.2% 56%,
-								100% 38.5%
-							);
-						" />
-				</div>
-				<div class="absolute inset-x-0 bottom-0 h-px bg-gray-100/5" />
-			</div>
-
-			<div class="mx-auto max-w-6xl px-4 py-10 sm:px-8 lg:px-10">
-				<div
-					class="mx-auto flex max-w-2xl items-center justify-between gap-x-8 lg:mx-0 lg:max-w-none">
-					<div class="flex items-center gap-x-6">
+						class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
 						<div
-							class="h-16 w-16 flex items-center justify-center rounded ring-1 ring-gray-100/10 p-2">
+							class="mt-2 flex items-center text-sm text-gray-400">
 							<Icon
-								name="fluent-emoji:person-medium"
-								class="w-12 h-12" />
+								name="tabler:users-group"
+								class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-500"
+								aria-hidden="true" />
+							{{ personalities.length }}
+							{{
+								personalities.length === 1
+									? "personality"
+									: "personalities"
+							}}
 						</div>
-						<h1>
-							<div
-								class="mt-1 text-xl font-semibold leading-6 text-gray-50">
-								Personalities
-							</div>
-							<div class="text-sm leading-6 text-gray-400">
-								AI personalities
-							</div>
-						</h1>
 					</div>
 				</div>
-			</div>
-		</header>
-		<div class="mx-auto max-w-6xl mt-20">
+				<div class="mt-5 flex lg:ml-4 lg:mt-0">
+					<span class="hidden sm:block">
+						<Button
+							theme="orange"
+							type="button"
+							@click="newPersonality">
+							New
+							<Icon
+								name="tabler:plus"
+								class="-mr-0.5 ml-1.5 h-5 w-5"
+								aria-hidden="true" />
+						</Button>
+					</span>
+				</div>
+			</header>
+		</div>
+
+		<div class="w-full h-0.5 bg-dark-100"></div>
+
+		<div class="mx-auto max-w-7xl mt-20 px-6">
 			<ul
 				role="list"
-				class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+				class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
 				<li
 					v-for="person in personalities"
 					:key="person.id"
-					class="col-span-1 flex flex-col divide-y divide-gray-700 rounded bg-dark-600 ring-2 ring-orange-500 text-center shadow">
-					<div class="flex flex-1 flex-col p-6">
+					class="col-span-1 flex flex-row rounded bg-dark-600 ring-1 ring-dark-200 shadow p-3 hover:ring-orange-500 duration-200 hover:ring-2 gap-3"
+					@click="navigateTo(`/personalities/${person.id}`)">
+					<div
+						class="flex justify-center items-center w-20 h-20 rounded overflow-hidden shrink-0">
 						<img
-							class="mx-auto w-full aspect-1 flex-shrink-0 rounded"
-							:src="person.avatar"
+							class="w-full h-full object-cover"
+							:src="
+								person.avatar ||
+								`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+									person.name
+								)}`
+							"
 							alt="" />
-						<h3 class="mt-6 text-sm font-medium text-gray-50">
+					</div>
+					<div class="flex flex-col justify-center">
+						<h3
+							class="text-sm font-medium text-gray-50 font-semibold">
 							{{ person.name }}
 						</h3>
-						<dl
-							class="mt-1 flex flex-grow flex-col justify-between">
-							<dt class="sr-only">Title</dt>
-							<dd class="text-sm text-gray-400">
-								{{ person.description }}
-							</dd>
-							<dd class="mt-4">
-								<NuxtLink :to="`/personalities/${person.id}`">
-									<Button theme="orange" class="w-full"
-										>Configure</Button
-									>
-								</NuxtLink>
-							</dd>
-						</dl>
+						<p
+							class="line-clamp-2 overflow-hidden text-ellipsis text-sm text-gray-200">
+							{{ person.description }}
+						</p>
 					</div>
 				</li>
 			</ul>

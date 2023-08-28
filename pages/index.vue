@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { User } from "~/db/entities/User";
+import { Chat } from "~/db/entities/Chat";
 const token = useCookie("token");
 
 const user = (await useFetch(`/api/user/get`)).data.value as User;
@@ -12,7 +13,7 @@ if (!user)
 			})
 	);
 
-const chat = await useFetch("/api/chats/create", {
+const chat = await useFetch<Chat>("/api/chats", {
 	method: "POST",
 	headers: {
 		"Content-Type": "application/json",
@@ -44,5 +45,5 @@ definePageMeta({
 <template>
 	<ChatsChatSidebar :user="user" />
 
-	<ChatsMainChat :id="chat.data.value?.id ?? 0" :user="user" />
+	<ChatsMainChat :id="chat.data.value?.id ?? ''" :user="user" />
 </template>
