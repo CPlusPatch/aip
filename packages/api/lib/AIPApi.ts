@@ -12,8 +12,8 @@ export class Client {
 	private readonly baseUrl: string;
 	private readonly token: string;
 
-	constructor(token: string) {
-		this.baseUrl = "http://localhost:3000/api";
+	constructor(token: string, baseUrl?: string) {
+		this.baseUrl = baseUrl || window.location.origin;
 		this.token = token;
 	}
 
