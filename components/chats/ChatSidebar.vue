@@ -108,7 +108,7 @@ const cleanChats = () => {
 											>{{
 												chat.messages.find(
 													m => m.role === "user"
-												)?.content
+												)?.content || "Empty chat"
 											}}</span
 										>
 										<Icon
