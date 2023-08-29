@@ -28,7 +28,7 @@ useHead({
 
 <template>
 	<main
-		class="bg-dark-400 max-h-screen h-screen overflow-scroll no-scrollbar grow">
+		class="bg-dark-400 max-h-screen !max-h-[100dvh] h-screen !h-[100dvh] overflow-scroll no-scrollbar grow">
 		<header class="relative isolate pt-16">
 			<div
 				class="absolute inset-0 -z-10 overflow-hidden"

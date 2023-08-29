@@ -4,6 +4,7 @@ import { markedHighlight } from "marked-highlight";
 import hljs from "highlight.js";
 import "highlight.js/styles/github-dark.css";
 import { User } from "~/db/entities/User";
+import { Personality } from "~/db/entities/Personality";
 
 const showCopyButtonCheck = ref(false);
 
@@ -20,7 +21,7 @@ const props = defineProps<{
 		id: string;
 		date: number;
 	} | null;
-	roleplayMode: boolean;
+	personality: Personality | null;
 	user: User;
 }>();
 
@@ -73,7 +74,7 @@ const markdown = computed(() =>
 
 <template>
 	<div
-		v-if="!roleplayMode"
+		v-if="!personality"
 		:class="[
 			'group w-full border-b dark:border-dark-50/50',
 			message.role === 'assistant' ? '!bg-dark-300' : '',
@@ -134,7 +135,7 @@ const markdown = computed(() =>
 	</div>
 	<div
 		v-else
-		class="w-full flex flex-row max-w-6xl mx-auto py-1 px-3 first-of-type:mt-10">
+		class="w-full flex flex-col max-w-6xl mx-auto py-1 px-3 first-of-type:mt-10 gap-2">
 		<transition
 			enter-active-class="duration-200"
 			enter-from-class="opacity-0"
@@ -147,6 +148,19 @@ const markdown = computed(() =>
 				class="fixed z-50 bg-dark-800/60 inset-0 backdrop-blur-lg"
 				@mousedown="isActionbarShown = false"></div>
 		</transition>
+		<div
+			v-if="message.role === 'assistant'"
+			class="flex flex-row gap-2 text-sm items-center">
+			<div
+				class="w-4 h-4 flex items-center justify-center rounded overflow-hidden">
+				<img
+					:src="personality.avatar"
+					class="w-full h-full object-cover" />
+			</div>
+			<span class="font-semibold text-gray-200">{{
+				personality.name
+			}}</span>
+		</div>
 		<div
 			ref="elementHook"
 			:class="[

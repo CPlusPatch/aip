@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { User } from "~/db/entities/User";
 import { Personality } from "~/db/entities/Personality";
+import { Client } from "~/packages/api";
+
+const token = useCookie("token");
+const client = new Client(token.value ?? "");
 
 const props = defineProps<{
 	user: User;
@@ -17,17 +21,7 @@ const emit = defineEmits<{
 	(event: "update:temperature", temperature: number): void;
 }>();
 
-const token = useCookie("token");
-
-const personalities =
-	(
-		await useFetch("/api/personalities/", {
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token.value}`,
-			},
-		})
-	).data.value ?? [];
+const personalities = await client.getPersonalities();
 
 const query = ref("");
 const selectedPerson = ref<Personality | null>(props.personality || null);

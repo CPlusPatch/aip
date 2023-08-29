@@ -17,7 +17,7 @@ useHead({
 </script>
 
 <template>
-	<div class="grow h-screen p-4">
+	<div class="grow h-screen p-4 !h-[100dvh]">
 		Invoices:
 		<ol>
 			<li v-for="invoice of invoices" :key="invoice.id">

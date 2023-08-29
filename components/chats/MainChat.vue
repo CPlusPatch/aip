@@ -232,7 +232,7 @@ const settingsOpen = ref(false);
 							data-projection-id="11"
 							style="top: 0px; transform: translateY(0%)">
 							<div
-								class="relative z-20 flex min-h-[60px] flex-wrap items-center justify-between gap-3 border-b border-black/10 bg-white p-2 text-gray-500 dark:border-gray-900/50 dark:bg-dark-800 dark:text-gray-300">
+								class="relative z-20 flex min-h-[60px] flex-wrap-none items-center justify-between gap-3 border-b border-black/10 bg-white p-2 text-gray-500 dark:border-gray-900/50 dark:bg-dark-800 dark:text-gray-300">
 								<div class="md:hidden flex">
 									<Button
 										theme="gray"
@@ -243,12 +243,33 @@ const settingsOpen = ref(false);
 											class="w-6 h-6" />
 									</Button>
 								</div>
-
 								<div
+									v-if="personality"
+									class="gap-2 p-1 flex flex-row grow">
+									<div
+										class="w-9 h-9 rounded shrink-0 overflow-hidden flex items-center justify-center">
+										<img
+											:src="personality.avatar"
+											class="object-cover w-full h-full" />
+									</div>
+									<div
+										class="flex flex-col justify-center text-sm">
+										<h2
+											class="text-gray-50 font-semibold line-clamp-1 overflow-hidden text-ellipsis">
+											{{ personality.name }}
+										</h2>
+										<p
+											class="text-gray-200 line-clamp-1 text-xs overflow-hidden text-ellipsis">
+											{{ personality.description }}
+										</p>
+									</div>
+								</div>
+								<div
+									v-else
 									class="flex flex-1 flex-grow items-center gap-1 p-1 text-gray-600 dark:text-gray-200 sm:justify-center sm:p-0">
 									<span>{{ model }}</span>
 								</div>
-								<div class="flex flex-shrink flex-row gap-2">
+								<div class="flex shrink-0 flex-row gap-2">
 									<Button
 										theme="gray"
 										class="!px-2 !py-2"
@@ -284,7 +305,7 @@ const settingsOpen = ref(false);
 							)"
 							:key="message.id"
 							:message="message"
-							:roleplay-mode="!!(personality || false)"
+							:personality="personality || null"
 							:next-message="messages[index + 1] || null"
 							:user="user"
 							@redact="redact" />

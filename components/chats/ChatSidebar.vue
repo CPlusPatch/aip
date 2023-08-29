@@ -60,7 +60,7 @@ const cleanChats = () => {
 	<div
 		class="dark flex-shrink-0 bg-dark-800 font-['Inter'] block md:w-[268px] w-full h-full">
 		<div
-			class="max-h-screen w-full h-full flex flex-col overflow-hidden border-white/20">
+			class="max-h-screen !max-h-[100dvh] w-full h-full flex flex-col overflow-hidden border-white/20">
 			<NuxtLink to="/" class="flex h-16 shrink-0 items-center px-2 mt-3">
 				<img
 					class="h-8 w-auto"
@@ -104,12 +104,16 @@ const cleanChats = () => {
 											name="tabler:messages"
 											class="w-4 h-4 shrink-0" />
 										<span
-											class="grow flex justify-start text-left whitespace-nowrap overflow-hidden text-ellipsis"
-											>{{ chat.title }}</span
+											class="grow text-gray-300 line-clamp-1 justify-start text-left whitespace-nowrap overflow-hidden text-ellipsis"
+											>{{
+												chat.messages.find(
+													m => m.role === "user"
+												)?.content
+											}}</span
 										>
 										<Icon
 											name="tabler:edit"
-											class="w-4 h-4 shrink-0 cursor:pointer" />
+											class="w-4 h-4 shrink-0 !hidden cursor:pointer" />
 										<Icon
 											title="Delete Chat"
 											name="tabler:trash"

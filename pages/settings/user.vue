@@ -109,7 +109,8 @@ useHead({
 </script>
 
 <template>
-	<main class="bg-dark-400 grow h-screen overflow-y-scroll no-scrollbar">
+	<main
+		class="bg-dark-400 grow h-screen !h-[100dvh] overflow-y-scroll no-scrollbar">
 		<!-- Settings forms -->
 		<div
 			class="divide-y divide-white/5 flex flex-col items-center children:w-full">

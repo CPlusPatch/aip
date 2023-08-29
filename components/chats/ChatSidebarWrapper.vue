@@ -32,7 +32,7 @@ const emit = defineEmits(["close"]);
 				</HeadlessTransitionChild>
 
 				<div
-					class="flex fixed inset-y-0 right-0 pr-10 max-w-full pointer-events-none font-inter">
+					class="flex fixed inset-y-0 right-0 pr-10 w-full pointer-events-none font-inter">
 					<HeadlessTransitionChild
 						enter="transform transition ease-in-out duration-300 sm:duration-300"
 						enter-from="-translate-x-full"
