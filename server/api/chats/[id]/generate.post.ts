@@ -169,8 +169,6 @@ export default defineEventHandler(async event => {
 		// Get new changes
 		workers = new Workers();
 
-		console.log(user.subscription);
-
 		await user.save();
 
 		// Set worker as unoccupied and save changes to disk

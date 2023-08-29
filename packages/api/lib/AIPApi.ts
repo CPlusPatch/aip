@@ -1,5 +1,9 @@
 import { Personality } from "~/db/entities/Personality";
 import { Chat } from "~/db/entities/Chat";
+import { User } from "~/db/entities/User";
+import { Invoice } from "~/db/entities/Invoice";
+import { Config } from "~/types/config";
+import Stripe from "stripe";
 
 export interface Message {
 	role: "user" | "system" | "assistant";
@@ -154,9 +158,49 @@ export class Client {
 		);
 	}
 
+	getUser(id?: string) {
+		if (id) {
+			return this.get<User>(`/api/users/${id}`, undefined, undefined);
+		} else {
+			return this.get<User>("/api/user/", undefined, undefined);
+		}
+	}
+
+	getOidcConfig() {
+		return this.get<Config["oidc_providers"]>(
+			"/api/config/oidc",
+			undefined,
+			undefined
+		);
+	}
+
 	deletePersonality(id: string) {
 		return this.delete<Personality>(
 			`/api/personalities/${id}`,
+			undefined,
+			undefined
+		);
+	}
+
+	getInvoices() {
+		return this.get<Invoice[]>(
+			"/api/billing/invoices",
+			undefined,
+			undefined
+		);
+	}
+
+	getInvoice(id: string) {
+		return this.get<Invoice>(
+			`/api/billing/invoices/${id}`,
+			undefined,
+			undefined
+		);
+	}
+
+	getInvoiceProducts(id: string) {
+		return this.get<Stripe.LineItem[]>(
+			`/api/billing/invoices/${id}/products`,
 			undefined,
 			undefined
 		);

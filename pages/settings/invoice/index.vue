@@ -1,14 +1,11 @@
 <script setup lang="ts">
+import { Client } from "~/packages/api";
+
 const token = useCookie("token");
 
-const invoices = (
-	await useFetch(`/api/billing/invoice/`, {
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-	})
-).data.value;
+const client = new Client(token.value ?? "");
+
+const invoices = await client.getInvoices();
 
 definePageMeta({
 	layout: "account",

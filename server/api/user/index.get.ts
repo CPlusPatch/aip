@@ -1,12 +1,9 @@
 import { getUserByToken } from "~/utils/tokens";
 
-/**
- * DEPRECATED API
- */
 export default defineEventHandler(async event => {
-	const cookie = parseCookies(event).token ?? "";
-
-	const user = await getUserByToken(cookie);
+	const user = await getUserByToken(
+		event.node.req.headers.authorization?.split(" ")[1] ?? ""
+	);
 
 	return user;
 });

@@ -1,16 +1,13 @@
 <script setup lang="ts">
-const token = useCookie("token");
+import { Client } from "~/packages/api";
 
 const invoiceId = useRoute().params.id ?? "";
 
-const invoice = (
-	await useFetch(`/api/billing/invoice/${invoiceId}`, {
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-	})
-).data.value;
+const token = useCookie("token");
+
+const client = new Client(token.value ?? "");
+
+const invoice = await client.getInvoice(invoiceId as string);
 
 if (!invoice)
 	throw createError({
@@ -18,16 +15,7 @@ if (!invoice)
 		message: "Invoice not found",
 	});
 
-const products = (
-	await useFetch(`/api/billing/invoice/${invoiceId}/products`, {
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token.value}`,
-		},
-	})
-).data.value;
-
-console.log(products);
+const products = await client.getInvoiceProducts(invoiceId as string);
 
 definePageMeta({
 	layout: "account",

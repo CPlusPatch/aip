@@ -94,6 +94,11 @@ export class User extends BaseEntity {
 			password: "",
 			stripe_id: "",
 			emailVerificationToken: "",
+			avatar:
+				this.avatar ||
+				`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+					this.display_name
+				)}`,
 		};
 	}
 }

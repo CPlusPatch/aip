@@ -1,24 +1,21 @@
 <script setup lang="ts">
 import { UserManager } from "oidc-client-ts";
 import { arrayBufferToWebP } from "webp-converter-browser";
-import { User } from "~/db/entities/User";
-import { Config } from "types/config";
+import { Config } from "~/types/config";
+import { Client } from "~/packages/api";
 
-const user = (await useFetch(`/api/user/get`)).data.value as User;
+const token = useCookie("token");
+
+const client = new Client(token.value ?? "");
+const user = await client.getUser();
 
 definePageMeta({
 	layout: "account",
 });
 
 const loading = ref(false);
-const token = useCookie("token");
 const isUploading = ref(false);
-const avatarUrl = ref(
-	user?.avatar ||
-		`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
-			user.display_name
-		)}`
-);
+const avatarUrl = ref(user?.avatar);
 
 const saveUserData = () => {
 	loading.value = true;
@@ -101,7 +98,7 @@ const clickFileInput = () => {
 	).click();
 };
 
-const oidc = (await useFetch("/api/config/oidc")).data;
+const oidc = await client.getOidcConfig();
 
 const linkOIDC = async (oidcProvider: Config["oidc_providers"][0]) => {
 	const userManager = new UserManager({

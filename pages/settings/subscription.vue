@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { Subscriptions, User } from "~/db/entities/User";
+import { Subscriptions } from "~/db/entities/User";
+import { Client } from "~/packages/api";
 
-const user = (await useFetch(`/api/user/get`)).data.value as User;
+const token = useCookie("token");
+
+const client = new Client(token.value ?? "");
+
+const user = await client.getUser();
 
 definePageMeta({
 	layout: "account",
@@ -17,18 +22,8 @@ const includedFeatures = [
 	"Future updates",
 ];
 
-if (!user)
-	navigateTo(
-		"/auth/login?" +
-			new URLSearchParams({
-				next: "/",
-			})
-	);
-
-const token = useCookie("token");
-
 const buyPremium = () => {
-	useFetch(`/api/billing/order`, {
+	useFetch<any>(`/api/billing/order`, {
 		method: "POST",
 		body: JSON.stringify({
 			product: "PREMIUM",

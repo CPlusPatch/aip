@@ -40,4 +40,16 @@ export class Personality extends BaseEntity {
 
 	@UpdateDateColumn()
 	edited_at?: Date;
+
+	toJSON() {
+		// Add default avatar
+		return {
+			...this,
+			avatar:
+				this.avatar ||
+				`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+					this.name
+				)}`,
+		};
+	}
 }

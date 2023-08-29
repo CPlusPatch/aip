@@ -92,12 +92,7 @@ const markdown = computed(() =>
 							v-else
 							alt="User"
 							loading="lazy"
-							:src="
-								user?.avatar ||
-								`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
-									user.display_name
-								)}`
-							"
+							:src="user?.avatar"
 							class="rounded w-full h-full" />
 					</div>
 				</div>

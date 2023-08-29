@@ -89,12 +89,7 @@ const newPersonality = async () => {
 						class="flex justify-center items-center w-20 h-20 rounded overflow-hidden shrink-0">
 						<img
 							class="w-full h-full object-cover"
-							:src="
-								person.avatar ||
-								`https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
-									person.name
-								)}`
-							"
+							:src="person.avatar"
 							alt="" />
 					</div>
 					<div class="flex flex-col justify-center">
