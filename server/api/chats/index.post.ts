@@ -1,20 +1,11 @@
 import { nanoid } from "nanoid";
 import { Personality } from "~/db/entities/Personality";
 import { Chat } from "~/db/entities/Chat";
-import { getUserByToken } from "~/utils/tokens";
+import { getUserAndErrorIfNone } from "~/server/utils/authMiddleware";
 
 // Creates a new AI chat and stores it in the database
 export default defineEventHandler(async event => {
-	const user = await getUserByToken(
-		event.node.req.headers.authorization?.split(" ")[1] ?? ""
-	);
-
-	// Throw an error if the sender is not authorized.
-	if (!user) {
-		throw createError({
-			statusCode: 401,
-		});
-	}
+	const user = await getUserAndErrorIfNone(event);
 
 	const body = await readBody<{
 		model: string;

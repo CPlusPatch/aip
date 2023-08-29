@@ -1,17 +1,8 @@
-import { getUserByToken } from "~/utils/tokens";
 import { Personality } from "~/db/entities/Personality";
+import { getUserAndErrorIfNone } from "~/server/utils/authMiddleware";
 
 export default defineEventHandler(async event => {
-	const user = await getUserByToken(
-		event.node.req.headers.authorization?.split(" ")[1] ?? ""
-	);
-
-	// Throw an error if the sender is not authorized.
-	if (!user) {
-		throw createError({
-			statusCode: 401,
-		});
-	}
+	await getUserAndErrorIfNone(event);
 
 	const personality = await Personality.findOne({
 		where: {

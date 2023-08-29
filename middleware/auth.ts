@@ -1,5 +1,7 @@
+import { User } from "~/db/entities/User";
+
 export default defineNuxtRouteMiddleware(async middleware => {
-	const user = (await useFetch("/api/user/get")).data.value;
+	const user = (await useFetch<User>("/api/user")).data.value;
 
 	if (!user) {
 		return navigateTo(

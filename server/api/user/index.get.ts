@@ -1,9 +1,9 @@
 import { getUserByToken } from "~/utils/tokens";
 
 export default defineEventHandler(async event => {
-	const user = await getUserByToken(
-		event.node.req.headers.authorization?.split(" ")[1] ?? ""
-	);
+	const cookie = parseCookies(event).token ?? "";
+
+	const user = await getUserByToken(cookie);
 
 	return user;
 });

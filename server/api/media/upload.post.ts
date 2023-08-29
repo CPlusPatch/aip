@@ -1,18 +1,9 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { Role } from "~/db/entities/User";
-import { getUserByToken } from "~/utils/tokens";
 import { getConfig } from "~/utils/config";
+import { getUserAndErrorIfNone } from "~/server/utils/authMiddleware";
 
 export default defineEventHandler(async event => {
-	const user = await getUserByToken(
-		event.node.req.headers.authorization?.split(" ")[1] ?? ""
-	);
-
-	if (user?.role !== Role.ADMIN) {
-		throw createError({
-			statusCode: 401,
-		});
-	}
+	await getUserAndErrorIfNone(event);
 
 	const config = getConfig();
 

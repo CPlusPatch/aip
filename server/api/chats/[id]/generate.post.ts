@@ -4,20 +4,11 @@ import OpenAI from "openai";
 import type { Stream } from "openai/streaming";
 import { Subscriptions } from "~/db/entities/User";
 import { Chat } from "~/db/entities/Chat";
-import { getUserByToken } from "~/utils/tokens";
 import { Workers } from "~/utils/workers";
+import { getUserAndErrorIfNone } from "~/server/utils/authMiddleware";
 
 export default defineEventHandler(async event => {
-	const user = await getUserByToken(
-		event.node.req.headers.authorization?.split(" ")[1] ?? ""
-	);
-
-	// Throw an error if the sender is not authorized.
-	if (!user) {
-		throw createError({
-			statusCode: 401,
-		});
-	}
+	const user = await getUserAndErrorIfNone(event);
 
 	if (
 		![Subscriptions.PREMIUM].includes(user.subscription) &&
