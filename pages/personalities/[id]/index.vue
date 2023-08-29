@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { arrayBufferToWebP } from "webp-converter-browser";
 import { Client } from "~/packages/api";
 
 const token = useCookie("token");
@@ -49,38 +48,15 @@ const save = () => {
 		});
 };
 
-const uploadFile = async (e: Event) => {
+const uploadFile = (e: Event) => {
 	const target = e.target as HTMLInputElement;
 
 	if (!target.files?.length) return false;
 
 	isUploading.value = true;
 
-	// Dont convert WebP and SVG files to WebP automatically
-	const file: File =
-		target.files[0].type.includes("webp") ||
-		target.files[0].type.includes("svg")
-			? target.files[0]
-			: new File(
-					[
-						await arrayBufferToWebP(
-							await target.files[0].arrayBuffer()
-						),
-					],
-					target.files[0].name.split(".").slice(0, -1).join(".") +
-						".webp"
-			  );
-
-	const formData = new FormData();
-	formData.append("file", file);
-
-	fetch("/api/media/upload", {
-		method: "POST",
-		body: formData,
-		headers: {
-			Authorization: `Bearer ${token.value}`,
-		},
-	})
+	client
+		.uploadImage(target.files[0])
 		.then(async res => {
 			if (res.ok) {
 				avatar.value = await res.text();

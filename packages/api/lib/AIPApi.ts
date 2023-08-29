@@ -3,6 +3,7 @@ import { Chat } from "~/db/entities/Chat";
 import { User } from "~/db/entities/User";
 import { Invoice } from "~/db/entities/Invoice";
 import { Config } from "~/types/config";
+import { arrayBufferToWebP } from "webp-converter-browser";
 import Stripe from "stripe";
 
 export interface Message {
@@ -45,12 +46,39 @@ export class Client {
 		}
 	}
 
+	async requestForm<T>(
+		method: string,
+		path: string,
+		body: any,
+		headers: any,
+		raw = false
+	) {
+		const response = await fetch(`${this.baseUrl}${path}`, {
+			method,
+			headers: {
+				Authorization: `Bearer ${this.token}`,
+				...headers,
+			},
+			body,
+		});
+
+		if (raw) {
+			return response as T;
+		} else {
+			return response.json() as Promise<T>;
+		}
+	}
+
 	get<T>(path: string, body: any, headers: any, raw?: boolean) {
 		return this.request<T>("GET", path, body, headers, raw);
 	}
 
 	post<T>(path: string, body: any, headers: any, raw?: boolean) {
 		return this.request<T>("POST", path, body, headers, raw);
+	}
+
+	postForm<T>(path: string, body: any, headers: any, raw?: boolean) {
+		return this.requestForm<T>("POST", path, body, headers, raw);
 	}
 
 	put<T>(path: string, body: any, headers: any, raw?: boolean) {
@@ -203,6 +231,26 @@ export class Client {
 			`/api/billing/invoices/${id}/products`,
 			undefined,
 			undefined
+		);
+	}
+
+	async uploadImage(file: File) {
+		const file2 =
+			file.type.includes("webp") || file.type.includes("svg")
+				? file
+				: new File(
+						[await arrayBufferToWebP(await file.arrayBuffer())],
+						file.name.split(".").slice(0, -1).join(".") + ".webp"
+				  );
+
+		const formData = new FormData();
+		formData.append("file", file2);
+
+		return this.postForm<Response>(
+			"/api/media/upload",
+			formData,
+			undefined,
+			true
 		);
 	}
 }

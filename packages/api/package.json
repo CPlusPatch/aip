@@ -23,5 +23,8 @@
     },
     "homepage": "https://github.com/uden-ai/aip",
     "bugs": "https://github.com/Uden-AI/aip/issues",
-    "license": "GPL-3.0"
+    "license": "GPL-3.0",
+    "dependencies": {
+        "webp-converter-browser": "^1.0.4"
+    }
 }
