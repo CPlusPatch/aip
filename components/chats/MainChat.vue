@@ -43,15 +43,20 @@ const error = ref<{
 	message: string;
 } | null>(null);
 
-const sendMessage = (e: Event) => {
+const sendMessage = (e: Event, regenerate?: boolean) => {
 	e.preventDefault();
 
+	if (regenerate) {
+		messages.value.pop();
+	}
+
 	// Don't send empty messages
-	if (message.value.length < 1) {
+	if (message.value.length < 1 && !regenerate) {
 		return;
 	} else {
 		error.value = null;
 	}
+
 	isLoading.value = true;
 
 	bottomOfChatRef?.value?.scrollIntoView({
@@ -59,15 +64,18 @@ const sendMessage = (e: Event) => {
 	});
 
 	// Add the message to the conversation
-	messages.value.push({
-		content: message.value,
-		role: "user",
-		id: nanoid(),
-		date: Date.now(),
-	});
 
-	// Clear the message & remove empty chat
-	message.value = "";
+	if (!regenerate) {
+		messages.value.push({
+			content: message.value,
+			role: "user",
+			id: nanoid(),
+			date: Date.now(),
+		});
+
+		// Clear the message & remove empty chat
+		message.value = "";
+	}
 
 	try {
 		client
@@ -315,6 +323,17 @@ const settingsOpen = ref(false);
 						theme="gray"
 						@click="isGenerating = false"
 						>Stop generation</Button
+					>
+					<Button
+						v-if="messages.at(-1)?.role === 'assistant'"
+						theme="gray"
+						@click="
+							e => {
+								isGenerating = false;
+								sendMessage(e, true);
+							}
+						"
+						>Regenerate response</Button
 					>
 					<!-- <Button theme="gray">Regenerate</Button> -->
 				</div>
