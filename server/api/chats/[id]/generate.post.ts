@@ -105,6 +105,7 @@ export default defineEventHandler(async event => {
 					stream: true,
 					temperature: body.temperature ?? 0.7,
 					max_tokens: 4096,
+					frequency_penalty: 1.7,
 				});
 
 				break;
