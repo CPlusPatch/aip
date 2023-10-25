@@ -2853,9 +2853,6 @@ packages:
     resolution: {integrity: sha512-r3hjHPBu+3LzbGBa8DHnr/KAeTEEOrahkcL+cZc4MaBMTM+mk8LtXR+zw+nqfjuDZZzYTYgTcpHuP+BEQk069g==}
     dev: false
 
-  /@types/node@20.5.6:
-    resolution: {integrity: sha512-Gi5wRGPbbyOTX+4Y2iULQ27oUPrefaB0PxGQJnfyWN3kvEDGM3mIB5M/gQLmitZf7A9FmLeaqxD3L1CXpm3VKQ==}
-
   /@types/node@20.5.7:
     resolution: {integrity: sha512-dP7f3LdZIysZnmvP3ANJYTSwg+wLLl8p7RqniVlV7j+oXSXAbt9h0WIBFmJy5inWZoX9wZN6eXx+YXd9Rh3RBA==}
 
@@ -4523,8 +4520,8 @@ packages:
       randomfill: 1.0.4
     dev: true
 
-  /crypto-js@4.1.1:
-    resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
+  /crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
     dev: false
 
   /css-declaration-sorter@6.4.1(postcss@8.4.28):
@@ -6555,7 +6552,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 20.5.6
+      '@types/node': 20.5.7
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -7603,7 +7600,7 @@ packages:
     resolution: {integrity: sha512-omAHoLdFcylnwZeHJahOnJBwd0r78JzhmVAmsQjLGrexAnQKiHW9Ilr9FlRD5qjMikmabvaucI4k49AbQLXhmQ==}
     engines: {node: '>=12.13.0'}
     dependencies:
-      crypto-js: 4.1.1
+      crypto-js: 4.2.0
       jwt-decode: 3.1.2
     dev: false
 
