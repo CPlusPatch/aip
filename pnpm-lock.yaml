@@ -60,11 +60,11 @@ dependencies:
     specifier: ^1.1.2
     version: 1.1.2
   stripe:
-    specifier: ^13.3.0
-    version: 13.3.0
+    specifier: ^14.4.0
+    version: 14.4.0
   stripe-event-types:
     specifier: ^2.4.0
-    version: 2.4.0(stripe@13.3.0)
+    version: 2.4.0(stripe@14.4.0)
   typeorm:
     specifier: 0.3.17
     version: 0.3.17(pg@8.11.3)
@@ -2852,9 +2852,6 @@ packages:
   /@types/node@18.17.11:
     resolution: {integrity: sha512-r3hjHPBu+3LzbGBa8DHnr/KAeTEEOrahkcL+cZc4MaBMTM+mk8LtXR+zw+nqfjuDZZzYTYgTcpHuP+BEQk069g==}
     dev: false
-
-  /@types/node@20.5.6:
-    resolution: {integrity: sha512-Gi5wRGPbbyOTX+4Y2iULQ27oUPrefaB0PxGQJnfyWN3kvEDGM3mIB5M/gQLmitZf7A9FmLeaqxD3L1CXpm3VKQ==}
 
   /@types/node@20.5.7:
     resolution: {integrity: sha512-dP7f3LdZIysZnmvP3ANJYTSwg+wLLl8p7RqniVlV7j+oXSXAbt9h0WIBFmJy5inWZoX9wZN6eXx+YXd9Rh3RBA==}
@@ -6555,7 +6552,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 20.5.6
+      '@types/node': 20.5.7
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -8945,16 +8942,16 @@ packages:
     dependencies:
       acorn: 8.10.0
 
-  /stripe-event-types@2.4.0(stripe@13.3.0):
+  /stripe-event-types@2.4.0(stripe@14.4.0):
     resolution: {integrity: sha512-5ORZMW/WKjc31nsGMCUECOS+xVjtHhAFJJ8833ft3471hIjQrMbLMPBEb5AcJM8mKRRULpKmCVMDU0lLYrxERQ==}
     peerDependencies:
       stripe: '>=10.0.0'
     dependencies:
-      stripe: 13.3.0
+      stripe: 14.4.0
     dev: false
 
-  /stripe@13.3.0:
-    resolution: {integrity: sha512-saDZBvk8fCBz9GigKpVXAaAo0K+TQe+DwVmucAzpJq503Y44P2ehMqulfaRoK8a+etuwIUlgsXD+am6YSMxepg==}
+  /stripe@14.4.0:
+    resolution: {integrity: sha512-E3IxDo/Bvu0TtYrKfAf8lEYd0beTjFSN4xemuw2oEfUyxFpJyrzRZOw50HIEXFYYHWNDORicd8G8R4joCbN3/Q==}
     engines: {node: '>=12.*'}
     dependencies:
       '@types/node': 20.5.7

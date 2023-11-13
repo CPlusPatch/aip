@@ -49,7 +49,7 @@
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "smol-toml": "^1.1.2",
-    "stripe": "^13.3.0",
+    "stripe": "^14.4.0",
     "stripe-event-types": "^2.4.0",
     "typeorm": "0.3.17",
     "uuid": "^9.0.0",
